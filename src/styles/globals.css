@@ -1,0 +1,46 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import "@fontsource/kodchasan/latin.css";
+@import "@fontsource/koho/latin.css";
+@import "@fontsource/dm-sans/latin.css";
+/* @import "@fontsource/poppins/400.css"; */
+/* @import "@fontsource/poppins/700.css"; */
+@import "@fontsource/poppins/latin.css";
+
+body {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+  --bg-color: #22477f;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+.responsive-h1 {
+  font-size: calc(4px + 1vw);
+}
+
+::-webkit-scrollbar {
+  background-color: #333;
+  width: 0px; /* Width of the scrollbar */
+  scrollbar-width: none;
+}
