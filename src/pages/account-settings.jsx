@@ -14,30 +14,34 @@ import { useGetActiveCountriesQuery } from "@/slices/countriesApiSlice";
 import sample from "@/assets/images/sample.svg";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
-import WithAuth from '@/components/withAuth';
-
+import WithAuth from "@/components/withAuth";
 
 const AccountSettings = () => {
   // Define initialFormData as a constant to avoid recreating it on each render
-  const initialFormData = React.useMemo(() => ({
-    primary_content: "",
-    phone: "",
-    about_brand: "",
-    country: null,
-    other_links: ["", "", ""],
-    newPickedImage: null,
-    changedImageFile: null,
-    user_name: "",
-    social_media: ["", "", ""],
-    website_url: "",
-  }), []);
+  const initialFormData = React.useMemo(
+    () => ({
+      primary_content: "",
+      phone: "",
+      about_brand: "",
+      country: null,
+      other_links: ["", "", ""],
+      newPickedImage: null,
+      changedImageFile: null,
+      user_name: "",
+      social_media: ["", "", ""],
+      website_url: "",
+    }),
+    []
+  );
 
   const [subscriptionStatusName, setSubscriptionStatusName] = useState("None");
   const [editingField, setEditingField] = useState(null);
 
   const { data: activeCountries } = useGetActiveCountriesQuery();
-  const { data: userProfile, refetch: userProfileRefetch } = useGetProfileQuery();
-  const [updateUser, { isLoading: isUpdateLoading }] = useUpdateProfileMutation();
+  const { data: userProfile, refetch: userProfileRefetch } =
+    useGetProfileQuery();
+  const [updateUser, { isLoading: isUpdateLoading }] =
+    useUpdateProfileMutation();
   const [uploadAttachment] = useUploadAttachmentMutation();
   const uploadPicRef = useRef(null);
 
@@ -59,12 +63,15 @@ const AccountSettings = () => {
     }
   }, []);
 
-  const handleFormDataChange = useCallback((e) => {
-    const { name, value } = e.target;
-    if (Object.keys(initialFormData).includes(name)) {
-      setFormData((prev) => ({ ...prev, [name]: value }));
-    }
-  }, [initialFormData]);
+  const handleFormDataChange = useCallback(
+    (e) => {
+      const { name, value } = e.target;
+      if (Object.keys(initialFormData).includes(name)) {
+        setFormData((prev) => ({ ...prev, [name]: value }));
+      }
+    },
+    [initialFormData]
+  );
 
   const handleCountryUpdate = (e) => {
     const selectedCountry = e.target.value;
@@ -94,10 +101,12 @@ const AccountSettings = () => {
         attachment_id: logoImageId || formData.profileImage?.id,
       };
 
-      await updateUser(dataToSubmit).unwrap();
-      toast.success("User Updated.");
+      const res = await updateUser(dataToSubmit).unwrap();
+      toast.success(res?.message || res?.data?.message || "User Updated.");
+      console.log("ress",res);
+      
     } catch (error) {
-      toast.error("Error in Submit");
+      toast.error(error?.message || error?.data?.message || "Error in Submit");
     }
   };
 
@@ -138,7 +147,9 @@ const AccountSettings = () => {
 
   useEffect(() => {
     if (userProfile?.subscriptionStatus?.subscriptionPlan?.name) {
-      setSubscriptionStatusName(userProfile.subscriptionStatus.subscriptionPlan.name);
+      setSubscriptionStatusName(
+        userProfile.subscriptionStatus.subscriptionPlan.name
+      );
     }
   }, [userProfile?.subscriptionStatus?.subscriptionPlan?.name]);
 

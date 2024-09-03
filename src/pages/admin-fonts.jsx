@@ -115,20 +115,27 @@ export default function PaginatedTable() {
                     id: selectedFont.id,
                     bodyData: fontData
                 }).unwrap();
-
+    
                 setRows(prevRows =>
                     [...prevRows.map(row => row.id === updatedFont.id ? updatedFont : row)].sort((a, b) => a.id - b.id)
                 );
-
+    
                 allFontDataRefetch();
                 handleModalClose();
+    
+                // Show success toast
+                toast.success( updatedFont?.message || updatedFont?.data?.message || "Font updated successfully!");
             } else {
-                await createFont(fontData).unwrap();
+            const response =    await createFont(fontData).unwrap();
                 allFontDataRefetch();
                 handleModalClose();
+    
+                // Show success toast
+                toast.success(response?.message || response?.data?.message || "Font created successfully!");
             }
         } catch (error) {
-            // Handle error
+            // Show error toast
+            toast.error(error?.message || error?.data?.message || "An error occurred while saving the font. Please try again.");
         }
     };
 

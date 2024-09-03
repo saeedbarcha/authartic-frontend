@@ -152,33 +152,58 @@ export default function PaginatedTable() {
     setFormData({ ...formData, status: newStatus });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     toast.info("Updating country...");
-    if (selectedCountry) {
-      updateCountry({ id: selectedCountry.id, bodyData: formData })
-        .then(() => {
-          refetch();
-          setOpenModal(false);
-          toast.success("Country updated successfully!");
-        })
-        .catch(() => {
-          toast.error("Failed to update country.");
-        });
+
+    try {
+      if (selectedCountry) {
+        // Await the updateCountry call
+        const response = await updateCountry({
+          id: selectedCountry.id,
+          bodyData: formData,
+        }).unwrap();
+
+        // Refetch the data and update the UI
+        refetch();
+        setOpenModal(false);
+
+        // Show success toast
+        toast.success(
+          response?.message ||
+            response?.data?.message ||
+            "Country updated successfully!"
+        );
+      }
+    } catch (error) {
+      // Show error toast if something goes wrong
+      toast.error(
+        error?.message || error?.data?.message || "Failed to update country."
+      );
     }
   };
 
-  const handleCreateSubmit = () => {
+  const handleCreateSubmit = async () => {
     toast.info("Creating country...");
-    createCountry(createFormData)
-      .then(() => {
-        refetch();
-        setOpenCreateModal(false);
-        setCreateFormData({ name: "", code: "" });
-        toast.success("Country created successfully!");
-      })
-      .catch(() => {
-        toast.error("Failed to create country.");
-      });
+
+    try {
+      // Await the createCountry call
+      const res = await createCountry(createFormData).unwrap(); // Assuming unwrap is needed if using RTK Query
+
+      // Refetch data and update the UI
+      refetch();
+      setOpenCreateModal(false);
+      setCreateFormData({ name: "", code: "" });
+
+      // Show success toast
+      toast.success(
+        res?.message || res?.data?.message || "Country created successfully!"
+      );
+    } catch (error) {
+      // Show error toast if something goes wrong
+      toast.error(
+        error?.message || error?.data?.message || "Failed to create country."
+      );
+    }
   };
 
   useEffect(() => {

@@ -20,8 +20,7 @@ import Footer from "@/components/footer";
 import { useRouter } from "next/router";
 import { useGetProfileQuery } from "@/slices/userApiSlice";
 import { useGetAllFontsQuery } from "@/slices/fontApiSlice";
-import WithAuth from '@/components/withAuth';
-
+import WithAuth from "@/components/withAuth";
 
 const initialData = {
   name: "",
@@ -42,9 +41,18 @@ function ProPlanVendor() {
   const uploadCustomBgRef = useRef(null);
   const [allFonts, setAllFonts] = useState([]);
   const [isDataLoaded, setIsDataLoaded] = useState(false); // Track if data is loaded
-  const { data: currentUser, isLoading: isCurrentUserLoading, error: isCurrentUserError, refetch: currentUserRefetch } = useGetProfileQuery();
-  const { data: allFont, isLoading: isAllfontLoading, error: isAllfontrError, refetch: AllfontRefetch } = useGetAllFontsQuery();
-
+  const {
+    data: currentUser,
+    isLoading: isCurrentUserLoading,
+    error: isCurrentUserError,
+    refetch: currentUserRefetch,
+  } = useGetProfileQuery();
+  const {
+    data: allFont,
+    isLoading: isAllfontLoading,
+    error: isAllfontrError,
+    refetch: AllfontRefetch,
+  } = useGetAllFontsQuery();
 
   const [productImagePreview, setProductImagePreview] = useState({
     productImagePreview: null,
@@ -161,7 +169,13 @@ function ProPlanVendor() {
               customImagePreview: null,
             });
             setAcceptCertificate(false);
-            toast.success("Certificate created successfully!");
+            console.log("certificateResponse", certificateResponse);
+            
+            toast.success(
+              certificateResponse?.message ||
+                certificateResponse?.data?.message ||
+                "Certificate created successfully!"
+            );
             router.push("/home-after-login");
           } else {
             toast.error("Custom background image not provided.");
@@ -170,7 +184,7 @@ function ProPlanVendor() {
           toast.error("Product image not provided.");
         }
       } catch (error) {
-        toast.error("Failed to create certificate. Please try again.");
+        toast.error(error?.message || error?.data?.message || "Failed to create certificate. Please try again.");
       }
     }
   };
@@ -206,9 +220,9 @@ function ProPlanVendor() {
 
   useEffect(() => {
     if (allFont) {
-      setAllFonts(allFont)
+      setAllFonts(allFont);
     }
-  }, [allFont])
+  }, [allFont]);
 
   return (
     <>
@@ -313,19 +327,28 @@ function ProPlanVendor() {
                 <legend className="bg-white text-sm text-black px-[3px] pb-[3pxpx] tracking-tighter">
                   Number of Certificates
                 </legend>
-                {isDataLoaded &&
+                {isDataLoaded && (
                   <div className="w-full h-full">
-                    <input type="number"
+                    <input
+                      type="number"
                       name="number_of_certificate_select"
                       min={0}
-                      max={currentUser?.subscriptionStatus?.remaining_certificates}
+                      max={
+                        currentUser?.subscriptionStatus?.remaining_certificates
+                      }
                       id="number_of_certificate_select"
                       className="outline-none border-none w-full h-full"
                       value={formData.number_of_certificate}
-                      onChange={(e) => setFormData(prev => ({ ...prev, number_of_certificate: e.target.value }))} />
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          number_of_certificate: e.target.value,
+                        }))
+                      }
+                    />
                     <strong className="text-white text-sm">{`Remaining ${currentUser?.subscriptionStatus?.remaining_certificates}`}</strong>
                   </div>
-                }
+                )}
               </fieldset>
             </Box>
           </Box>
@@ -345,7 +368,10 @@ function ProPlanVendor() {
                 id="fonts"
                 className="w-full border-none outline-none h-[40px]"
               >
-                {allFonts && allFonts?.map((font, index) => <option key={index}>{font.name}</option>)}
+                {allFonts &&
+                  allFonts?.map((font, index) => (
+                    <option key={index}>{font.name}</option>
+                  ))}
               </select>
             </fieldset>
 
@@ -363,10 +389,11 @@ function ProPlanVendor() {
               ></span>
 
               <div
-                className={`absolute left-0 top-0 z-10 flex flex-col bg-slate-300 gap-3 py-1 px-3 rounded-lg transition-all ${toggleColorPicker.isOpenFontColorpicker
-                  ? "block opacity-1 scale-1"
-                  : "hidden opacity-0 scale-0"
-                  }`}
+                className={`absolute left-0 top-0 z-10 flex flex-col bg-slate-300 gap-3 py-1 px-3 rounded-lg transition-all ${
+                  toggleColorPicker.isOpenFontColorpicker
+                    ? "block opacity-1 scale-1"
+                    : "hidden opacity-0 scale-0"
+                }`}
               >
                 <h1
                   style={{ color: formData.font_color }}
@@ -434,10 +461,11 @@ function ProPlanVendor() {
                 ></span>
 
                 <div
-                  className={`absolute left-0 top-0 z-10 flex flex-col bg-slate-300 gap-3 py-1 px-3 rounded-lg transition-all ${toggleColorPicker.isOpenBgColorPicker
-                    ? "block opacity-1 scale-1"
-                    : "hidden opacity-0 scale-0"
-                    }`}
+                  className={`absolute left-0 top-0 z-10 flex flex-col bg-slate-300 gap-3 py-1 px-3 rounded-lg transition-all ${
+                    toggleColorPicker.isOpenBgColorPicker
+                      ? "block opacity-1 scale-1"
+                      : "hidden opacity-0 scale-0"
+                  }`}
                 >
                   <h1
                     style={{ backgroundColor: formData.bg_color }}
@@ -631,6 +659,4 @@ function ProPlanVendor() {
   );
 }
 
-
-export default WithAuth(ProPlanVendor, ['VENDOR']);
-
+export default WithAuth(ProPlanVendor, ["VENDOR"]);
