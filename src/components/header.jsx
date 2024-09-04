@@ -1,23 +1,25 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Box, Button } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
 import Logo from "../assets/images/logo.png";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import LogoutIcon from "@mui/icons-material/Logout";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import { useRouter } from "next/router";
-import { useState, useEffect } from "react";
 import { useLogoutMutation } from "@/slices/userApiSlice";
 import { toast } from "react-toastify";
+import { logout } from "@/slices/authSlice";
 
 const Header = ({ disableAccountSettings }) => {
   const router = useRouter();
+  const dispatch = useDispatch();
   const token = useSelector((state) => state.auth.userInfo?.access_token);
   const [logoutApiCall] = useLogoutMutation();
 
   const [authStatus, setAuthStatus] = useState(false);
+
   useEffect(() => {
     if (token) {
       setAuthStatus(true);
@@ -26,18 +28,29 @@ const Header = ({ disableAccountSettings }) => {
     }
   }, [token]);
 
- 
   const handleLogout = async () => {
     try {
-      await logoutApiCall().unwrap();
+      // Call the API to log out
+      const response = await logoutApiCall().unwrap();
+
+      // Dispatch the Redux logout action to clear local storage and update state
+      dispatch(logout());
+
+      // Redirect to home page
       
-      router.push("/");
-      toast.success("Successfully logged out!"); // Show success toast
+      // Show success toast
+      toast.success(
+        response?.message || response?.data?.message || "Successfully logged out!"
+      );
+      router.push("/Home");
     } catch (error) {
-      toast.error("Failed to log out. Please try again."); // Show error toast
+      // Show error toast
+      toast.error(
+        error?.message || error?.data?.message || "Failed to log out. Please try again."
+      );
     }
   };
-  
+
   return (
     <Box
       display="flex"
@@ -50,70 +63,66 @@ const Header = ({ disableAccountSettings }) => {
         <Image
           src={Logo}
           alt="Logo"
-          height={"auto"}
+          height="auto"
           width={200}
           className="w-[125px] sm:w-[160px] md:w-[200px] h-auto"
-          priority={true}
+          priority
         />
       </Box>
 
       {!authStatus ? (
-        <Link href={"/"}>
+        <Link href="/">
           <Button
             variant="h6"
             color="inherit"
-            className="font-Kodchasan text-[20px] font-semibold cursor-pointer  flex items-center gap-1"
+            className="font-Kodchasan text-[20px] font-semibold cursor-pointer flex items-center gap-1"
           >
             <HomeIcon />
-            home
+            Home
           </Button>
         </Link>
       ) : (
         <div className="flex flex-col items-end gap-1">
           {disableAccountSettings === "Yes" ? (
-            <Link href={"/"}>
+            <Link href="/">
               <Button
                 variant="h6"
                 color="inherit"
-                className="font-Kodchasan text-[20px] font-semibold cursor-pointer p-0  flex items-center gap-1"
+                className="font-Kodchasan text-[20px] font-semibold cursor-pointer p-0 flex items-center gap-1"
               >
                 <HomeIcon />
                 Home
               </Button>
             </Link>
           ) : (
-            <Link href={"/"}>
-              <Button
-                variant="h6"
-                color="inherit"
-                className="font-Kodchasan text-[20px] font-semibold cursor-pointer p-0  flex items-center gap-1"
-                onClick={handleLogout}
-              >
-                <LogoutIcon />
-                Logout
-              </Button>
-            </Link>
+            <Button
+              variant="h6"
+              color="inherit"
+              className="font-Kodchasan text-[20px] font-semibold cursor-pointer p-0 flex items-center gap-1"
+              onClick={handleLogout}
+            >
+              <LogoutIcon />
+              Logout
+            </Button>
           )}
 
           {disableAccountSettings === "Yes" ? (
-            <Link href={"/"}>
-              <Button
-                variant="h6"
-                color="inherit"
-                className="font-Kodchasan text-sm font-medium cursor-pointer p-0 flex items-center gap-1"
-                onClick={handleLogout}
-              >
-                <LogoutIcon />
-                Logout
-              </Button>
-            </Link>
+            <Button
+              variant="h6"
+              color="inherit"
+              className="font-Kodchasan text-sm font-medium cursor-pointer p-0 flex items-center gap-1"
+              onClick={handleLogout}
+            >
+              <LogoutIcon />
+              Logout
+            </Button>
           ) : (
             <Link
-              href={"/account-settings"}
+              href="/account-settings"
               className="font-Kodchasan text-sm font-medium cursor-pointer p-0 flex items-center gap-1"
             >
               <ManageAccountsIcon />
-              <small>account-settings</small>
+              <small>Account Settings</small>
             </Link>
           )}
         </div>

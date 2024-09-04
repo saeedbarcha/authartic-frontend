@@ -46,7 +46,6 @@ export default function PaginatedTable() {
     isLoading: isReportsLoading,
     error: reportsError,
 
-    
     refetch: reportsDataRefetch,
   } = useAdminNewReportProblemQuery({
     limit: 1000, // Fetch a large number of rows to avoid pagination
@@ -94,16 +93,29 @@ export default function PaginatedTable() {
   const handleSend = async () => {
     try {
       if (selectedReport) {
+        // Await the adminResponseReport API call
         const res = await adminResponseReport({
           id: selectedReport.id,
           responseText: reportData.reportText,
           reportStatus: parseInt(reportData.status, 10),
-        }).unwrap();
+        }).unwrap(); // Assuming unwrap is needed if using RTK Query
+
+        // Refetch data and close the modal upon success
         reportsDataRefetch();
         handleModalClose();
+
+        // Show success toast
+        toast.success(
+          res?.message || res?.data?.message || "Report sent successfully!"
+        );
       }
     } catch (error) {
-      // Handle error
+      // Show error toast if something goes wrong
+      toast.error(
+        error.message ||
+          error?.data?.message ||
+          "Failed to send report. Please try again."
+      );
     }
   };
 
@@ -124,7 +136,8 @@ export default function PaginatedTable() {
     setReportData({
       ...reportData,
       status: newStatus,
-      reportText: newStatus === "1" || newStatus === "2" ? "" : reportData.reportText, // Clear report text if status is 1 or 2
+      reportText:
+        newStatus === "1" || newStatus === "2" ? "" : reportData.reportText, // Clear report text if status is 1 or 2
     });
   };
 

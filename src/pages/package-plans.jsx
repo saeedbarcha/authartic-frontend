@@ -21,6 +21,8 @@ import WithAuth from "@/components/withAuth";
 const Index = () => {
   const [openModal, setOpenModal] = useState(false);
   const { userInfo } = useSelector((state) => state?.auth);
+  
+  
   const router = useRouter();
 
   const {
@@ -46,8 +48,8 @@ const Index = () => {
 
   const handleResendVerification = async () => {
     try {
-      await resendVerificationEmail().unwrap();
-      toast.success("Verification email has been sent!");
+   const response =    await resendVerificationEmail().unwrap();
+      toast.success(response?.message || response?.data?.message || "Verification email has been sent!");
     } catch (err) {
       if (err.data && err.data.message) {
         toast.error(`Failed to resend verification email: ${err.data.message}`);

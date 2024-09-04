@@ -95,13 +95,13 @@ const CodeRegistration = () => {
   };
 
   const handlesocialMediaLinksChange = (index, value) => {
-    const updatedLinks = [...socialMediaLinks];
+    const updatedLinks = [socialMediaLinks];
     updatedLinks[index] = value;
     setSocialMediaLinks(updatedLinks);
   };
 
   const handleOtherLinkChange = (index, value) => {
-    const updatedLinks = [...otherLinks];
+    const updatedLinks = [otherLinks];
     updatedLinks[index] = value;
     setOtherLinks(updatedLinks);
   };
@@ -174,7 +174,10 @@ const CodeRegistration = () => {
           // Redirect on success
           router.push("/");
         } catch (error) {
-          toast.error(error?.data?.message || error.error);
+          console.log('====================================');
+          console.log(error);
+          console.log('====================================');
+          toast.error(   error?.data?.message || error.message);
         }
       } else {
         toast.warning("Product image not selected");

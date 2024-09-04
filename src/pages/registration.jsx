@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useGetValidationCodeByCodeMutation } from "@/slices/validationCodeApiSlice";
 import { WithAuth } from "@/components/withAuth";
+import { toast } from "react-toastify";
 
 const Registration = () => {
   const router = useRouter();
@@ -26,12 +27,12 @@ const Registration = () => {
       if (response.id) {
         // Save the ID in localStorage
         localStorage.setItem("validCodeId", response.id);
-
+        toast.success(response?.message || response?.data?.message || "Validation code is valid" )
         // Redirect to registration-with-code page
         router.push("registration-with-code");
       }
     } catch (error) {
-      setValidText(error.data.message);
+      toast.error(error?.data?.message || error?.message);
     } finally {
       setIsValidating(false);
     }
@@ -41,7 +42,7 @@ const Registration = () => {
     <Box className="min-h-screen flex flex-col justify-between">
       <Header />
       <Box className="flex flex-col items-center h-full">
-        <form className="w-full max-w-xs" onSubmit={handleSubmit} id="form1">
+        <form className="w-full max-w-xs mb-3" onSubmit={handleSubmit} id="form1">
           <TextField
             label="Validation code"
             variant="outlined"
@@ -64,7 +65,7 @@ const Registration = () => {
               },
             }}
           />
-          <p className="mb-7 text-red-500">{validText ? validText : ""}</p>
+          {/* <p className="mb-7 text-red-500">{validText ? validText : ""}</p> */}
         </form>
 
         <Button

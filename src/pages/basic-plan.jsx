@@ -107,13 +107,17 @@ function Index() {
           setImageFiles(null);
           setProductImagePreview(null);
           setAcceptCertificate(false);
-          toast.success("Certificate created successfully!");
+          toast.success(
+            certificateResponse?.message ||
+              certificateResponse?.data?.message ||
+              "Certificate created successfully!"
+          );
           router.push("/home-after-login");
         } else {
           toast.error("Product image not provided.");
         }
       } catch (error) {
-        toast.error("Failed to create certificate. Please try again.");
+        toast.error(error?.message || error?.data?.message || "Failed to create certificate. Please try again.");
       }
     }
   };

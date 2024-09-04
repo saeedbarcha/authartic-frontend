@@ -125,7 +125,11 @@ function Index() {
             productImagePreview: null,
           });
           setAcceptCertificate(false);
-          toast.success("Certificate created successfully!");
+          toast.success(
+            certificateResponse?.message ||
+              certificateResponse?.data?.message ||
+              "Certificate created successfully!"
+          );
           router.push("/home-after-login");
         } else {
           toast.error("Product image not provided.");

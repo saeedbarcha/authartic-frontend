@@ -13,7 +13,7 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 
 const LoginForm = ({ title, from }) => {
-  const router = useRouter(); 
+  const router = useRouter();
   const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -24,7 +24,6 @@ const LoginForm = ({ title, from }) => {
 
   React.useEffect(() => {
     if (userInfo) {
-    
       if (userInfo.role === "ADMIN") {
         router.push("/admin-dashboard");
       } else if (userInfo.role === "VENDOR") {
@@ -57,22 +56,22 @@ const LoginForm = ({ title, from }) => {
       if (res.user) {
         if (res.user.role !== selectedRole) {
           toast.error("Access denied. Invalid role.");
-          return; 
+          return;
         }
-        toast.success("Login successful!");
+        toast.success(res?.message || res?.data?.message || "Login successful!");
         dispatch(setCredentials({ ...res }));
 
         if (res.user.role === "ADMIN") {
           router.push("/admin-dashboard");
         } else if (res.user.role === "VENDOR") {
-          const hasPlan = res.user.subscriptionStatus; 
+          const hasPlan = res.user.subscriptionStatus;
           if (hasPlan) {
             router.push("/home-after-login");
           } else {
             router.push("/package-plans");
           }
         }
-  
+
         setEmail("");
         setPassword("");
       }

@@ -31,7 +31,7 @@ const WithAuth = (WrappedComponent, rolesRequired = []) => {
     useEffect(() => {
       if (!isLoading) {
         if (!isLoggedIn) {
-          router.push("/login"); // Redirect to login if not logged in
+          router.push("/"); // Redirect to login if not logged in
         } else if (!hasRequiredRole) {
           router.push("/unauthorized"); // Redirect to unauthorized if roles don't match
         }

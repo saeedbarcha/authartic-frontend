@@ -7,11 +7,13 @@ import {
   CircularProgress,
   Checkbox,
   FormControlLabel,
-
+  IconButton,
 } from "@mui/material";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
-import SearchIcon from '@mui/icons-material/Search';
+import SearchIcon from "@mui/icons-material/Search";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import {
   useFindEmailMutation,
   useSendOtpEmailMutation,
@@ -21,7 +23,7 @@ import {
 import WithAuth from "@/components/withAuth";
 
 const RecoverPassword = () => {
-  const [searchEmailRes, setSearchEmailRes] = useState('')
+  const [searchEmailRes, setSearchEmailRes] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("VENDOR");
@@ -38,32 +40,55 @@ const RecoverPassword = () => {
     updatePassword,
     { isLoading: isUpdateLoading, isError: isUpdateError },
   ] = useUpdatePasswordMutation();
-  const [selectedEmails, setSelectedEmails] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isOtpSent, setIsOtpSent] = useState(false); // Track OTP sending status
-  const [isOtpVerified, setIsOtpVerified] = useState(false); // Track OTP verification status
+  const [isOtpSent, setIsOtpSent] = useState(false); 
+  const [isOtpVerified, setIsOtpVerified] = useState(false); 
   const [verifyCode, setVerifyCode] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const router = useRouter();
 
-  // Trigger search when email input changes
   const handleEmailSearch = async () => {
     try {
       if (email.length > 2) {
         const response = await findEmail({ email, role });
-        if (response) {
-          setSearchEmailRes(response?.error?.data?.message?.join(" "))
-        } else {
-          toast.error(error?.data?.message || error?.message || error?.data?.error || error?.error || 'Error occured while searching your email')
-        }
-      }
+        console.log("ress", response);
 
+        if (response && response.statusCode === 404) {
+          // Handle specific error case for "No matching emails found."
+          toast.error("No matching emails found.");
+        } else if (response && response.error) {
+          // Handle other errors if `response.error` is present
+          setSearchEmailRes(response?.data?.message?.join(" "));
+          toast.error(
+            error?.error?.data?.message?.join(" ") || response?.message ||
+              "Error occurred while searching your emailfff."
+          );
+        } else {
+          // If no specific error but a response exists, assume success
+          toast.success(
+            response?.message ||
+              response?.data?.message ||
+              "Email found successfully!"
+          );
+        }
+      } else {
+        toast.error(
+          error?.error?.data?.message?.join(" ") || response?.message ||
+            "Error occurred while searching your email."
+        );
+      }
     } catch (error) {
-      console.log('sadfasdfasdf')
-      toast.error(error?.data?.message || error?.message || error?.data?.error || error?.error || 'Error occured while searching your email')
+      // Handle unexpected errors or network issues
+      toast.error(
+        error?.response?.data?.message ||
+          error?.message ||
+          "Error occurred while searching your emaifdvresponseresponseresponseresponseresponseresponseresponseresponseresponseresponseresponseresponsel"
+      );
     }
-  }
+  };
 
   const [selectedEmail, setSelectedEmail] = useState(null);
 
@@ -71,25 +96,37 @@ const RecoverPassword = () => {
     setSelectedEmail(suggestion);
   };
 
-  console.log(selectedEmail)
-
-  
   // Handles checkbox selection
 
   // Handles OTP sending
+
   const handleSendOtp = async () => {
     setIsSubmitting(true);
     try {
       const otpRequestData = {
-        email: selectedEmail, // Send the first checked email
+        email: selectedEmail, // Send the selected email
         role: role,
       };
-      await sendOtpEmail(otpRequestData).unwrap();
-      toast.success("OTP code sent successfully");
+
+      // Await the result and capture the response
+      const response = await sendOtpEmail(otpRequestData).unwrap();
+
+      // Display success message from the response or a default success message
+      toast.success(
+        response?.message ||
+          response?.data?.message ||
+          "OTP code sent successfully"
+      );
+
       setIsOtpSent(true);
       setCurrentPage(2); // Navigate to the next page
     } catch (error) {
-      toast.error("Error sending OTP code");
+      // Display error message from the response or a default error message
+      toast.error(
+        error?.response?.data?.message ||
+          error?.message ||
+          "Error sending OTP code"
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -105,12 +142,13 @@ const RecoverPassword = () => {
         role: role,
         otp: verifyCode,
       };
-      await verifyAccount(verifyData).unwrap();
-      toast.success("OTP verified successfully");
+      const response = await verifyAccount(verifyData).unwrap();
+      toast.success(
+        response?.message || response?.messages || "OTP verify successfully"
+      );
       setIsOtpVerified(true);
-      setCurrentPage(3); // Navigate to the next page
+      setCurrentPage(3);
     } catch (error) {
-      console.log(error)
       toast.error(error?.data?.message);
     } finally {
       setIsSubmitting(false);
@@ -137,16 +175,19 @@ const RecoverPassword = () => {
 
     try {
       // Call the updatePassword API mutation
-      await updatePassword(updateData).unwrap();
+      const response = await updatePassword(updateData).unwrap();
 
-      toast.success("Password updated successfully");
+      toast.success(
+        response.message || response.messages || "Password update successfully"
+      );
 
       // Redirect to home screen upon success
       router.push("/");
     } catch (error) {
       // Handle error
       toast.error(
-        `Error updating password: ${error.message || "An unknown error occurred"
+        `Error updating password: ${
+          error.message || "An unknown error occurred"
         }`
       );
     } finally {
@@ -158,10 +199,11 @@ const RecoverPassword = () => {
     <div className="bg-green-50 h-screen flex flex-col p-4 overflow-scroll scroller-hidden">
       <Box className="flex justify-center items-center gap-3">
         <strong
-          className={`font-kodchasan font-semibold text-lg flex items-center justify-center cursor-pointer rounded-full w-[30px] h-[30px] ${currentPage === 1 || isOtpSent
-            ? "text-green-800 border-2"
-            : "text-blue-800"
-            }`}
+          className={`font-kodchasan font-semibold text-lg flex items-center justify-center cursor-pointer rounded-full w-[30px] h-[30px] ${
+            currentPage === 1 || isOtpSent
+              ? "text-green-800 border-2"
+              : "text-blue-800"
+          }`}
           onClick={() => setCurrentPage(1)}
           style={{
             pointerEvents: isOtpSent || currentPage === 1 ? "auto" : "none",
@@ -170,28 +212,32 @@ const RecoverPassword = () => {
           1
         </strong>
         <span
-          className={`w-24 h-[2px] ${currentPage > 1 ? "bg-green-800" : "bg-gray-900"
-            }`}
+          className={`w-24 h-[2px] ${
+            currentPage > 1 ? "bg-green-800" : "bg-gray-900"
+          }`}
         ></span>
         <strong
-          className={`font-kodchasan font-semibold text-lg flex items-center justify-center cursor-pointer rounded-full w-[30px] h-[30px] ${currentPage === 2 && isOtpSent
-            ? "text-green-800 border-2"
-            : "text-blue-800"
-            }`}
+          className={`font-kodchasan font-semibold text-lg flex items-center justify-center cursor-pointer rounded-full w-[30px] h-[30px] ${
+            currentPage === 2 && isOtpSent
+              ? "text-green-800 border-2"
+              : "text-blue-800"
+          }`}
           onClick={() => setCurrentPage(2)}
           style={{ pointerEvents: isOtpSent ? "auto" : "none" }}
         >
           2
         </strong>
         <span
-          className={`w-24 h-[2px] ${currentPage > 2 ? "bg-green-800" : "bg-gray-900"
-            }`}
+          className={`w-24 h-[2px] ${
+            currentPage > 2 ? "bg-green-800" : "bg-gray-900"
+          }`}
         ></span>
         <strong
-          className={`font-kodchasan font-semibold text-lg flex items-center justify-center cursor-pointer rounded-full w-[30px] h-[30px] ${currentPage === 3 && isOtpVerified
-            ? "text-green-800 border-2"
-            : "text-blue-800"
-            }`}
+          className={`font-kodchasan font-semibold text-lg flex items-center justify-center cursor-pointer rounded-full w-[30px] h-[30px] ${
+            currentPage === 3 && isOtpVerified
+              ? "text-green-800 border-2"
+              : "text-blue-800"
+          }`}
           onClick={() => setCurrentPage(3)}
           style={{ pointerEvents: isOtpVerified ? "auto" : "none" }}
         >
@@ -210,7 +256,7 @@ const RecoverPassword = () => {
               Enter your email address
             </Typography>
             <Typography variant="body1" className="text-center text-xs mb-4">
-              Enter your email address below and we will   send you an OTP
+              Enter your email address below and we will send you an OTP
             </Typography>
             <form
               onSubmit={(e) => {
@@ -228,7 +274,10 @@ const RecoverPassword = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                 />
-                <div onClick={() => handleEmailSearch()} className="bg-[#22477f] flex text-white cursor-pointer items-center justify-center rounded-lg px-2 py-[px]">
+                <div
+                  onClick={() => handleEmailSearch()}
+                  className="bg-[#22477f] flex text-white cursor-pointer items-center justify-center rounded-lg px-2 py-[px]"
+                >
                   <p>Search</p>
                 </div>
               </div>
@@ -243,23 +292,20 @@ const RecoverPassword = () => {
                       Suggested emails:
                     </Typography>
                     {suggestions.map((suggestion, index) => (
-                        <div key={index} className="flex items-center gap-3 my-1">
-                          <input
-                            type="radio"
-                            name="email"
-                            id={index}
-                            checked={selectedEmail === suggestion}
-                            onChange={() => handleRadioChange(suggestion)}
-                          />
-                          <label htmlFor={index}>
-                            {suggestion}
-                          </label>
-                        </div>
-                      ))}
+                      <div key={index} className="flex items-center gap-3 my-1">
+                        <input
+                          type="radio"
+                          name="email"
+                          id={index}
+                          checked={selectedEmail === suggestion}
+                          onChange={() => handleRadioChange(suggestion)}
+                        />
+                        <label htmlFor={index}>{suggestion}</label>
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>
-
 
               <Button
                 type="submit"
@@ -290,7 +336,9 @@ const RecoverPassword = () => {
             >
               Enter your OTP
             </Typography>
-            <span className="text-xs">We have send an OTP on <b>{selectedEmail}</b></span>
+            <span className="text-xs">
+              We have send an OTP on <b>{selectedEmail}</b>
+            </span>
             <form onSubmit={handleVerifyOtp}>
               <TextField
                 label="OTP Code"
@@ -332,26 +380,43 @@ const RecoverPassword = () => {
               Update Password
             </Typography>
             <form onSubmit={handleSubmit}>
-              <TextField
-                label="New Password"
-                type="password"
-                variant="outlined"
-                fullWidth
-                margin="normal"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                required
-              />
-              <TextField
-                label="Confirm Password"
-                type="password"
-                variant="outlined"
-                fullWidth
-                margin="normal"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-              />
+              <div className="relative">
+                <TextField
+                  label="New Password"
+                  type={showNewPassword ? "text" : "password"}
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  required
+                />
+                <IconButton
+                  className="absolute inset-y-0 right-0 flex items-center pr-2"
+                  onClick={() => setShowNewPassword((prev) => !prev)}
+                >
+                  {showNewPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </div>
+
+              <div className="relative">
+                <TextField
+                  label="Confirm Password"
+                  type={showConfirmPassword ? "text" : "password"}
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                />
+                <IconButton
+                  className="absolute inset-y-0 right-0 flex items-center pr-2"
+                  onClick={() => setShowConfirmPassword((prev) => !prev)}
+                >
+                  {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </div>
               <Button
                 type="submit"
                 variant="contained"
@@ -374,4 +439,4 @@ const RecoverPassword = () => {
   );
 };
 
-export default RecoverPassword
+export default RecoverPassword;
