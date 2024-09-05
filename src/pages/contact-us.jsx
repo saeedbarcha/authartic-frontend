@@ -41,8 +41,8 @@ const Form = () => {
 
     try {
       
-      await contactUs(dataToSend).unwrap(); 
-      toast.success("Message sent successfully!"); 
+    const res =  await contactUs(dataToSend).unwrap(); 
+      toast.success(res?.message || res?.message[0] || "Message sent successfully!"); 
 
       // Clear form data
       setFormData({

@@ -34,6 +34,7 @@ const AccountSettings = () => {
     []
   );
 
+
   const [subscriptionStatusName, setSubscriptionStatusName] = useState("None");
   const [editingField, setEditingField] = useState(null);
 
@@ -46,6 +47,8 @@ const AccountSettings = () => {
   const uploadPicRef = useRef(null);
 
   const [formData, setFormData] = useState(initialFormData);
+
+
 
   const handleFileChange = useCallback((e) => {
     const file = e.target.files[0];
@@ -95,20 +98,22 @@ const AccountSettings = () => {
         phone: formData.phone,
         about_brand: formData.about_brand,
         user_name: formData.user_name,
-        social_media: formData.social_media,
+        social_media: formData.social_media?.filter(link=>link?.trim() !== ""),
         website_url: formData.website_url,
-        other_links: formData.other_links,
+        other_links: formData.other_links?.filter(link=>link?.trim() !== ""),
         attachment_id: logoImageId || formData.profileImage?.id,
       };
 
       const res = await updateUser(dataToSubmit).unwrap();
-      toast.success(res?.message || res?.data?.message || "User Updated.");
-      console.log("ress",res);
+      toast.success(res?.message || res?.data?.message[0] || "User Updated.");
+
       
     } catch (error) {
-      toast.error(error?.message || error?.data?.message || "Error in Submit");
+      showErrorMessage(error,  "Error in Submit")
+
     }
   };
+
 
   const handleCancel = () => {
     if (userProfile) {
@@ -136,11 +141,11 @@ const AccountSettings = () => {
         phone: userProfile.phone || "",
         about_brand: userProfile.about_brand || "",
         country: userProfile.country?.id || null,
-        other_links: userProfile.other_links || ["", "", ""],
+        other_links: userProfile.other_links?.concat(['','',''])?.slice(0,3) || ["", "", ""],
         profileImage: userProfile.vendor_logo || sample,
         user_name: userProfile.vendor_name || "",
-        social_media: userProfile.social_media || ["", "", ""],
-        website_url: userProfile.website_url || "",
+        social_media: userProfile?.social_media?.concat(['','',''])?.slice(0,3) || ["", "", ""],
+        website_url: userProfile.website_url || '',
       });
     }
   }, [userProfile, initialFormData]);
@@ -334,8 +339,9 @@ const AccountSettings = () => {
                       />
                     </label>
                   </div>
-                  {formData.other_links.map((link, idx) => (
-                    <div key={idx} className={`w-full h-auto  pr-10`}>
+                  {formData.other_links.map((link, idx) => {
+                    return (
+                      <div key={idx} className={`w-full h-auto  pr-10`}>
                       <input
                         id="links"
                         type="text"
@@ -357,7 +363,8 @@ const AccountSettings = () => {
                         }`}
                       />
                     </div>
-                  ))}
+                    )
+                  })}
                 </div>
 
                 {/* SOCIAL MEDIA LINKS */}

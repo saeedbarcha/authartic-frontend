@@ -33,8 +33,8 @@ const CodeRegistration = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [description, setDescription] = useState("");
   const [website, setWebsite] = useState("");
-  const [socialMediaLinks, setSocialMediaLinks] = useState([]);
-  const [otherLinks, setOtherLinks] = useState([]);
+  const [socialMediaLinks, setSocialMediaLinks] = useState(['','','']);
+  const [otherLinks, setOtherLinks] = useState(['','','']);
   const [validation_code_id, setValidationCodeId] = useState(0);
   const [acceptForm, setAcceptForm] = useState(false);
 
@@ -95,15 +95,19 @@ const CodeRegistration = () => {
   };
 
   const handlesocialMediaLinksChange = (index, value) => {
-    const updatedLinks = [socialMediaLinks];
-    updatedLinks[index] = value;
-    setSocialMediaLinks(updatedLinks);
+    setSocialMediaLinks((prevLinks) => {
+      const updatedLinks = [...prevLinks];
+      updatedLinks[index] = value;
+      return updatedLinks;
+    });
   };
 
   const handleOtherLinkChange = (index, value) => {
-    const updatedLinks = [otherLinks];
-    updatedLinks[index] = value;
-    setOtherLinks(updatedLinks);
+    setOtherLinks((prevLinks) => {
+      const updatedLinks = [...prevLinks];
+      updatedLinks[index] = value;
+      return updatedLinks;
+    });
   };
 
   const submitHandler = async (e) => {
@@ -150,6 +154,8 @@ const CodeRegistration = () => {
           setUploadResult(uploadRes);
 
           // Prepare registration data
+          const filteredSocialMediaLinks = socialMediaLinks.filter(link => link.trim() !== '');
+          const filteredOtherLinks = otherLinks.filter(link => link.trim() !== '');
           const registerData = {
             user_name: brandName,
             primary_content: primaryContent,
@@ -158,8 +164,8 @@ const CodeRegistration = () => {
             password: password,
             about_brand: description,
             website_url: website,
-            social_media: socialMediaLinks,
-            other_links: otherLinks,
+            social_media: filteredSocialMediaLinks,
+            other_links: filteredOtherLinks,
             country_id: selectedCountry.id,
             validation_code_id: validation_code_id,
             attachment_id: uploadRes?.id,
@@ -174,9 +180,7 @@ const CodeRegistration = () => {
           // Redirect on success
           router.push("/");
         } catch (error) {
-          console.log('====================================');
-          console.log(error);
-          console.log('====================================');
+      
           toast.error(   error?.data?.message || error.message);
         }
       } else {
@@ -304,7 +308,7 @@ const CodeRegistration = () => {
 
                 <TextField
                   label="Phone"
-                  type="tel"
+                  type="number"
                   variant="outlined"
                   fullWidth
                   name="phone"
