@@ -34,7 +34,6 @@ const AccountSettings = () => {
     []
   );
 
-
   const [subscriptionStatusName, setSubscriptionStatusName] = useState("None");
   const [editingField, setEditingField] = useState(null);
 
@@ -47,8 +46,6 @@ const AccountSettings = () => {
   const uploadPicRef = useRef(null);
 
   const [formData, setFormData] = useState(initialFormData);
-
-
 
   const handleFileChange = useCallback((e) => {
     const file = e.target.files[0];
@@ -98,22 +95,19 @@ const AccountSettings = () => {
         phone: formData.phone,
         about_brand: formData.about_brand,
         user_name: formData.user_name,
-        social_media: formData.social_media?.filter(link=>link?.trim() !== ""),
+        social_media: formData.social_media,
         website_url: formData.website_url,
-        other_links: formData.other_links?.filter(link=>link?.trim() !== ""),
+        other_links: formData.other_links,
         attachment_id: logoImageId || formData.profileImage?.id,
       };
 
       const res = await updateUser(dataToSubmit).unwrap();
-      toast.success(res?.message || res?.data?.message[0] || "User Updated.");
-
-      
+      toast.success(res?.message || res?.data?.message || "User Updated.");
+      console.log("ress", res);
     } catch (error) {
-      showErrorMessage(error,  "Error in Submit")
-
+      toast.error(error?.message || error?.data?.message || "Error in Submit");
     }
   };
-
 
   const handleCancel = () => {
     if (userProfile) {
@@ -141,11 +135,11 @@ const AccountSettings = () => {
         phone: userProfile.phone || "",
         about_brand: userProfile.about_brand || "",
         country: userProfile.country?.id || null,
-        other_links: userProfile.other_links?.concat(['','',''])?.slice(0,3) || ["", "", ""],
+        other_links: userProfile.other_links || ["", "", ""],
         profileImage: userProfile.vendor_logo || sample,
         user_name: userProfile.vendor_name || "",
-        social_media: userProfile?.social_media?.concat(['','',''])?.slice(0,3) || ["", "", ""],
-        website_url: userProfile.website_url || '',
+        social_media: userProfile.social_media || ["", "", ""],
+        website_url: userProfile.website_url || "",
       });
     }
   }, [userProfile, initialFormData]);
@@ -165,12 +159,15 @@ const AccountSettings = () => {
       </Head>
       <div className="w-full min-h-screen flex flex-col justify-between items-center">
         <Header disableAccountSettings={"Yes"} />
-        <div className="max-w-[730px] md:w-[730px] h-auto bg-[#273F7C] text-white rounded-[30px] overflow-hidden my-16 md:my-20 mx-3">
-          <div className="w-full h-full flex flex-col items-center justify-center px-12 py-7 font-koHo text-base gap-4">
+        <div className="w-[calc(100%-12px)] sm:max-w-[730px] md:w-[730px] h-auto bg-[#273F7C] text-white rounded-[30px] overflow-hidden my-16 md:my-20 mx-3">
+          <div className="w-full h-full flex flex-col items-center justify-center px-2 sm:px-12 pt-2 pb-7 sm:py-7 font-koHo text-base gap-4">
             <div className="w-full h-auto flex justify-center gap-5 md:gap-12 flex-col md:flex-row">
               {/* PROFILE IMAGE AND BRAND DESCRIPTION */}
               <div className="w-full md:max-w-[245px] h-auto flex flex-col items-center justify-start gap-2 text-black bg-[#ADA8A8] p-5 md:p-3 rounded-[28px]">
-                <figure className="block w-auto">
+                <figure
+                  className="block"
+                  style={{ width: "-webkit-fill-available" }}
+                >
                   <Image
                     src={
                       formData.newPickedImage ||
@@ -339,9 +336,8 @@ const AccountSettings = () => {
                       />
                     </label>
                   </div>
-                  {formData.other_links.map((link, idx) => {
-                    return (
-                      <div key={idx} className={`w-full h-auto  pr-10`}>
+                  {formData.other_links.map((link, idx) => (
+                    <div key={idx} className={`w-full h-auto  pr-10`}>
                       <input
                         id="links"
                         type="text"
@@ -363,8 +359,7 @@ const AccountSettings = () => {
                         }`}
                       />
                     </div>
-                    )
-                  })}
+                  ))}
                 </div>
 
                 {/* SOCIAL MEDIA LINKS */}

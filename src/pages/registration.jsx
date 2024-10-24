@@ -27,7 +27,11 @@ const Registration = () => {
       if (response.id) {
         // Save the ID in localStorage
         localStorage.setItem("validCodeId", response.id);
-        toast.success(response?.message || response?.data?.message || "Validation code is valid" )
+        toast.success(
+          response?.message ||
+            response?.data?.message ||
+            "Validation code is valid"
+        );
         // Redirect to registration-with-code page
         router.push("registration-with-code");
       }
@@ -41,8 +45,12 @@ const Registration = () => {
   return (
     <Box className="min-h-screen flex flex-col justify-between">
       <Header />
-      <Box className="flex flex-col items-center h-full">
-        <form className="w-full max-w-xs mb-3" onSubmit={handleSubmit} id="form1">
+      <Box className="flex flex-col items-center h-full px-4">
+        <form
+          className="w-full max-w-xs mb-3"
+          onSubmit={handleSubmit}
+          id="form1"
+        >
           <TextField
             label="Validation code"
             variant="outlined"

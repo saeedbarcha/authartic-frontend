@@ -33,8 +33,8 @@ const CodeRegistration = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [description, setDescription] = useState("");
   const [website, setWebsite] = useState("");
-  const [socialMediaLinks, setSocialMediaLinks] = useState(['','','']);
-  const [otherLinks, setOtherLinks] = useState(['','','']);
+  const [socialMediaLinks, setSocialMediaLinks] = useState([]);
+  const [otherLinks, setOtherLinks] = useState([]);
   const [validation_code_id, setValidationCodeId] = useState(0);
   const [acceptForm, setAcceptForm] = useState(false);
 
@@ -95,19 +95,15 @@ const CodeRegistration = () => {
   };
 
   const handlesocialMediaLinksChange = (index, value) => {
-    setSocialMediaLinks((prevLinks) => {
-      const updatedLinks = [...prevLinks];
-      updatedLinks[index] = value;
-      return updatedLinks;
-    });
+    const updatedLinks = [socialMediaLinks];
+    updatedLinks[index] = value;
+    setSocialMediaLinks(updatedLinks);
   };
 
   const handleOtherLinkChange = (index, value) => {
-    setOtherLinks((prevLinks) => {
-      const updatedLinks = [...prevLinks];
-      updatedLinks[index] = value;
-      return updatedLinks;
-    });
+    const updatedLinks = [otherLinks];
+    updatedLinks[index] = value;
+    setOtherLinks(updatedLinks);
   };
 
   const submitHandler = async (e) => {
@@ -154,8 +150,6 @@ const CodeRegistration = () => {
           setUploadResult(uploadRes);
 
           // Prepare registration data
-          const filteredSocialMediaLinks = socialMediaLinks.filter(link => link.trim() !== '');
-          const filteredOtherLinks = otherLinks.filter(link => link.trim() !== '');
           const registerData = {
             user_name: brandName,
             primary_content: primaryContent,
@@ -164,8 +158,8 @@ const CodeRegistration = () => {
             password: password,
             about_brand: description,
             website_url: website,
-            social_media: filteredSocialMediaLinks,
-            other_links: filteredOtherLinks,
+            social_media: socialMediaLinks,
+            other_links: otherLinks,
             country_id: selectedCountry.id,
             validation_code_id: validation_code_id,
             attachment_id: uploadRes?.id,
@@ -174,14 +168,16 @@ const CodeRegistration = () => {
 
           // Send registration request
           const response = await register(registerData).unwrap();
-   
+
           toast.success("Registration successful!");
 
           // Redirect on success
           router.push("/");
         } catch (error) {
-      
-          toast.error(   error?.data?.message || error.message);
+          console.log("====================================");
+          console.log(error);
+          console.log("====================================");
+          toast.error(error?.data?.message || error.message);
         }
       } else {
         toast.warning("Product image not selected");
@@ -206,8 +202,8 @@ const CodeRegistration = () => {
               helperText={errors.brandName}
               sx={textFieldStyles}
             />
-            <Box className="flex items-center">
-              <Button className="flex text-black bg-[#fff] rounded-[41.47px] px-4 py-4 gap-2">
+            <Box className="flex items-center flex-wrap gap-4 justify-center">
+              <Button className="flex text-black bg-[#fff] rounded-[41.47px] px-4 py-2 gap-2">
                 {productImagePreview.productImagePreview ? (
                   <Avatar
                     alt="Product Image"
@@ -226,7 +222,7 @@ const CodeRegistration = () => {
                 />
               </Button>
               <Button
-                className="bg-[#3276E8] text-white rounded-[41.47px] w-full px-4 py-2 mt-3 hover:bg-[#3276E8]"
+                className="bg-[#3276E8] text-white rounded-[41.47px] w-full sm:w-auto px-4 py-2 mt-3 hover:bg-[#3276E8]"
                 onClick={handleProductImageInputClick}
               >
                 Upload Now
@@ -238,8 +234,8 @@ const CodeRegistration = () => {
             <div className="w-[50%] h-[1px] bg-black"></div>
           </Box>
 
-          <Box className="sm:none md:flex flex-col sm:flex-col md:flex-row sm:flex-wrap md:flex-wrap lg:flex-nowrap sm:gap-2 md:gap-2 lg:gap-52">
-            <Box className="min-w-[400px] w-full">
+          <Box className="sm:none md:flex flex-col sm:flex-col md:flex-row sm:flex-wrap md:flex-wrap lg:flex-nowrap sm:gap-2 md:gap-2 lg:gap-20">
+            <Box className="w-full lg:min-w-[400px]">
               <TextField
                 label="Name of Primary Content"
                 variant="outlined"
@@ -308,7 +304,7 @@ const CodeRegistration = () => {
 
                 <TextField
                   label="Phone"
-                  type="number"
+                  type="tel"
                   variant="outlined"
                   fullWidth
                   name="phone"
@@ -351,7 +347,7 @@ const CodeRegistration = () => {
               />
             </Box>
 
-            <Box className="min-w-[400px] w-full">
+            <Box className="lg:min-w-[400px] w-full">
               <TextField
                 label="Tell Us About Your Brand"
                 multiline

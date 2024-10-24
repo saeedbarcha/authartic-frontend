@@ -169,6 +169,7 @@ function ProPlanVendor() {
               customImagePreview: null,
             });
             setAcceptCertificate(false);
+            console.log("certificateResponse", certificateResponse);
             
             toast.success(
               certificateResponse?.message ||

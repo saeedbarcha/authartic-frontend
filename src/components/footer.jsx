@@ -8,7 +8,7 @@ const Footer = () => {
       className="w-full flex justify-center items-center h-24 bg-[#22477F]"
       component="footer"
     >
-      <Box className="flex flex-wrap justify-center gap-14 text-white w-full px-4">
+      <Box className="flex flex-wrap justify-around sm:justify-center sm:gap-14 text-white w-full px-4">
         <Link href="/about">
           <Typography
             variant="body1"
