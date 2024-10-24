@@ -168,16 +168,16 @@ const CodeRegistration = () => {
 
           // Send registration request
           const response = await register(registerData).unwrap();
-   
+
           toast.success("Registration successful!");
 
           // Redirect on success
           router.push("/");
         } catch (error) {
-          console.log('====================================');
+          console.log("====================================");
           console.log(error);
-          console.log('====================================');
-          toast.error(   error?.data?.message || error.message);
+          console.log("====================================");
+          toast.error(error?.data?.message || error.message);
         }
       } else {
         toast.warning("Product image not selected");
@@ -202,8 +202,8 @@ const CodeRegistration = () => {
               helperText={errors.brandName}
               sx={textFieldStyles}
             />
-            <Box className="flex items-center">
-              <Button className="flex text-black bg-[#fff] rounded-[41.47px] px-4 py-4 gap-2">
+            <Box className="flex items-center flex-wrap gap-4 justify-center">
+              <Button className="flex text-black bg-[#fff] rounded-[41.47px] px-4 py-2 gap-2">
                 {productImagePreview.productImagePreview ? (
                   <Avatar
                     alt="Product Image"
@@ -222,7 +222,7 @@ const CodeRegistration = () => {
                 />
               </Button>
               <Button
-                className="bg-[#3276E8] text-white rounded-[41.47px] w-full px-4 py-2 mt-3 hover:bg-[#3276E8]"
+                className="bg-[#3276E8] text-white rounded-[41.47px] w-full sm:w-auto px-4 py-2 mt-3 hover:bg-[#3276E8]"
                 onClick={handleProductImageInputClick}
               >
                 Upload Now
@@ -234,8 +234,8 @@ const CodeRegistration = () => {
             <div className="w-[50%] h-[1px] bg-black"></div>
           </Box>
 
-          <Box className="sm:none md:flex flex-col sm:flex-col md:flex-row sm:flex-wrap md:flex-wrap lg:flex-nowrap sm:gap-2 md:gap-2 lg:gap-52">
-            <Box className="min-w-[400px] w-full">
+          <Box className="sm:none md:flex flex-col sm:flex-col md:flex-row sm:flex-wrap md:flex-wrap lg:flex-nowrap sm:gap-2 md:gap-2 lg:gap-20">
+            <Box className="w-full lg:min-w-[400px]">
               <TextField
                 label="Name of Primary Content"
                 variant="outlined"
@@ -347,7 +347,7 @@ const CodeRegistration = () => {
               />
             </Box>
 
-            <Box className="min-w-[400px] w-full">
+            <Box className="lg:min-w-[400px] w-full">
               <TextField
                 label="Tell Us About Your Brand"
                 multiline

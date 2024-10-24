@@ -11,14 +11,29 @@ import { useRouter } from "next/router";
 import { useLogoutMutation } from "@/slices/userApiSlice";
 import { toast } from "react-toastify";
 import { logout } from "@/slices/authSlice";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import MenuIcon from "@mui/icons-material/Menu";
+import { useGetProfileQuery } from "@/slices/userApiSlice";
 
 const Header = ({ disableAccountSettings }) => {
   const router = useRouter();
   const dispatch = useDispatch();
+  const {data:logedInUserDetails} = useGetProfileQuery()
   const token = useSelector((state) => state.auth.userInfo?.access_token);
   const [logoutApiCall] = useLogoutMutation();
 
+  const [logedInUser,setLogedInUser]=useState({})
+  const [anchorEl, setAnchorEl] = React.useState(null);
   const [authStatus, setAuthStatus] = useState(false);
+
+  
+  useEffect(()=>{
+    if(logedInUserDetails){
+      setLogedInUser(logedInUserDetails)
+      console.log(logedInUserDetails,'logedInUserDetailss')
+}
+  },[logedInUserDetails])
 
   useEffect(() => {
     if (token) {
@@ -37,18 +52,33 @@ const Header = ({ disableAccountSettings }) => {
       dispatch(logout());
 
       // Redirect to home page
-      
+
       // Show success toast
       toast.success(
-        response?.message || response?.data?.message || "Successfully logged out!"
+        response?.message ||
+          response?.data?.message ||
+          "Successfully logged out!"
       );
-      router.push("/Home");
+      if(logedInUser?.role === "ADMIN"){
+        router.push("/admin-login");
+      }else{
+        router.push("/Home");
+      }
     } catch (error) {
       // Show error toast
       toast.error(
-        error?.message || error?.data?.message || "Failed to log out. Please try again."
+        error?.message ||
+          error?.data?.message ||
+          "Failed to log out. Please try again."
       );
     }
+  };
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
   };
 
   return (
@@ -70,63 +100,92 @@ const Header = ({ disableAccountSettings }) => {
         />
       </Box>
 
-      {!authStatus ? (
-        <Link href="/">
-          <Button
-            variant="h6"
-            color="inherit"
-            className="font-Kodchasan text-[20px] font-semibold cursor-pointer flex items-center gap-1"
-          >
-            <HomeIcon />
-            Home
-          </Button>
-        </Link>
-      ) : (
-        <div className="flex flex-col items-end gap-1">
-          {disableAccountSettings === "Yes" ? (
+      <div>
+        <Button
+          id="basic-button"
+          aria-controls={open ? "basic-menu" : undefined}
+          aria-haspopup="true"
+          aria-expanded={open ? "true" : undefined}
+          onClick={handleClick}
+        >
+          <MenuIcon />
+        </Button>
+        <Menu
+          id="basic-menu"
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleClose}
+          MenuListProps={{
+            "aria-labelledby": "basic-button",
+          }}
+        >
+          {!authStatus ? (
             <Link href="/">
               <Button
                 variant="h6"
                 color="inherit"
-                className="font-Kodchasan text-[20px] font-semibold cursor-pointer p-0 flex items-center gap-1"
+                className="font-Kodchasan text-[20px] font-semibold cursor-pointer flex items-center gap-1"
               >
                 <HomeIcon />
                 Home
               </Button>
             </Link>
           ) : (
-            <Button
-              variant="h6"
-              color="inherit"
-              className="font-Kodchasan text-[20px] font-semibold cursor-pointer p-0 flex items-center gap-1"
-              onClick={handleLogout}
-            >
-              <LogoutIcon />
-              Logout
-            </Button>
-          )}
+            <div className="flex flex-col items-end gap-1">
+              {disableAccountSettings === "Yes" ? (
+                <MenuItem onClick={handleClose}>
+                  <Link href="/">
+                    <Button
+                      variant="h6"
+                      color="inherit"
+                      className="font-Kodchasan text-[20px] font-semibold cursor-pointer p-0 flex items-center gap-1"
+                    >
+                      <HomeIcon />
+                      Home
+                    </Button>
+                  </Link>
+                </MenuItem>
+              ) : (
+                <MenuItem onClick={handleClose}>
+                  <Button
+                    variant="h6"
+                    color="inherit"
+                    className="!font-Kodchasan !text-[20px] !font-semibold !cursor-pointer !p-0 !flex !items-center !gap-1"
+                    onClick={handleLogout}
+                  >
+                    <LogoutIcon />
+                    Logout
+                  </Button>
+                </MenuItem>
+              )}
 
-          {disableAccountSettings === "Yes" ? (
-            <Button
-              variant="h6"
-              color="inherit"
-              className="font-Kodchasan text-sm font-medium cursor-pointer p-0 flex items-center gap-1"
-              onClick={handleLogout}
-            >
-              <LogoutIcon />
-              Logout
-            </Button>
-          ) : (
-            <Link
-              href="/account-settings"
-              className="font-Kodchasan text-sm font-medium cursor-pointer p-0 flex items-center gap-1"
-            >
-              <ManageAccountsIcon />
-              <small>Account Settings</small>
-            </Link>
+              {disableAccountSettings === "Yes" ? (
+                <MenuItem onClick={handleClose}>
+                  <Button
+                    variant="h6"
+                    color="inherit"
+                    className="font-Kodchasan text-sm font-medium cursor-pointer p-0 flex items-center gap-1"
+                    onClick={handleLogout}
+                  >
+                    <LogoutIcon />
+                    Logout
+                  </Button>
+                </MenuItem>
+              ) : logedInUser?.role !=="ADMIN" && (
+                <MenuItem onClick={handleClose}>
+                  <Link
+                    href="/account-settings"
+                    className="font-Kodchasan text-sm font-medium cursor-pointer p-0 flex items-center gap-1"
+                  >
+                    <ManageAccountsIcon />
+                    <small>Account Settings</small>
+                  </Link>
+                </MenuItem>
+              )}
+            </div>
           )}
-        </div>
-      )}
+        </Menu>
+      </div>
     </Box>
   );
 };

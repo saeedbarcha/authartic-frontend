@@ -80,7 +80,7 @@ const Index = () => {
 
         {/* Full-screen overlay when email is not verified */}
         {openModal && (
-          <Dialog open={openModal} onClose={() => setOpenModal(false)}>
+          <Dialog open={openModal} onClose={() => setOpenModal(!false)}>
             <DialogTitle>Email Verification Required</DialogTitle>
             <DialogContent>
               <Typography>

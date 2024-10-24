@@ -58,7 +58,9 @@ const LoginForm = ({ title, from }) => {
           toast.error("Access denied. Invalid role.");
           return;
         }
-        toast.success(res?.message || res?.data?.message || "Login successful!");
+        toast.success(
+          res?.message || res?.data?.message || "Login successful!"
+        );
         dispatch(setCredentials({ ...res }));
 
         if (res.user.role === "ADMIN") {
@@ -108,6 +110,7 @@ const LoginForm = ({ title, from }) => {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         sx={{
+          width: "-webkit-fill-available",
           borderRadius: "10px",
           "& .MuiInputLabel-root": {
             color: "#606060",
@@ -140,6 +143,7 @@ const LoginForm = ({ title, from }) => {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         sx={{
+          width: "-webkit-fill-available",
           borderRadius: "10px",
           "& .MuiInputLabel-root": {
             color: "#606060",
@@ -188,7 +192,7 @@ const LoginForm = ({ title, from }) => {
           <RegisterBTN title={"Register"} />
         </div>
       </div>
-      <div className="flex flex-col items-end justify-start my-3">
+      <div className="flex flex-col items-center sm:items-end justify-start my-3 sm:mx-2">
         <Link
           href={"/recover-password"}
           className={`text-black font-bold text-[15px] font-kodchasan`}

@@ -103,8 +103,7 @@ const AccountSettings = () => {
 
       const res = await updateUser(dataToSubmit).unwrap();
       toast.success(res?.message || res?.data?.message || "User Updated.");
-      console.log("ress",res);
-      
+      console.log("ress", res);
     } catch (error) {
       toast.error(error?.message || error?.data?.message || "Error in Submit");
     }
@@ -160,12 +159,15 @@ const AccountSettings = () => {
       </Head>
       <div className="w-full min-h-screen flex flex-col justify-between items-center">
         <Header disableAccountSettings={"Yes"} />
-        <div className="max-w-[730px] md:w-[730px] h-auto bg-[#273F7C] text-white rounded-[30px] overflow-hidden my-16 md:my-20 mx-3">
-          <div className="w-full h-full flex flex-col items-center justify-center px-12 py-7 font-koHo text-base gap-4">
+        <div className="w-[calc(100%-12px)] sm:max-w-[730px] md:w-[730px] h-auto bg-[#273F7C] text-white rounded-[30px] overflow-hidden my-16 md:my-20 mx-3">
+          <div className="w-full h-full flex flex-col items-center justify-center px-2 sm:px-12 pt-2 pb-7 sm:py-7 font-koHo text-base gap-4">
             <div className="w-full h-auto flex justify-center gap-5 md:gap-12 flex-col md:flex-row">
               {/* PROFILE IMAGE AND BRAND DESCRIPTION */}
               <div className="w-full md:max-w-[245px] h-auto flex flex-col items-center justify-start gap-2 text-black bg-[#ADA8A8] p-5 md:p-3 rounded-[28px]">
-                <figure className="block w-auto">
+                <figure
+                  className="block"
+                  style={{ width: "-webkit-fill-available" }}
+                >
                   <Image
                     src={
                       formData.newPickedImage ||

@@ -40,34 +40,28 @@ export default function Home() {
               </h1>
 
               <div className="flex flex-col sm:flex-row  md:flex-col items-center justify-Center gap-3">
-                <Link
-                  href={"https://www.appstore.com/authartic"}
-                  target="_blank"
-                >
-                  <div className="flex p-[5px] items-center bg-black md:w-[280px] lg:w- [300px] text-white rounded-3xl px-5 md:px-3 py-1 shadow-lg">
-                    <div className="p-[5px] md:p-[10px]">
+              <Link href={"https://www.appstore.com/authartic"} target="_blank">
+                  <div className="min-w-[190px] flex gap-2 p-[5px] items-center bg-black md:w-[280px] lg:w-[300px] text-white rounded-xl sm:rounded-3xl px-5 md:px-3 py-1 shadow-lg">
+                    <div className="sm:p-[5px] md:p-[10px]">
                       <div>
-                        <AppleIcon color="white" className="text-[60px]" />
+                        <AppleIcon color="white" className="text-[40px] sm:text-[60px]" />
                       </div>
                     </div>
                     <div className="flex flex-col items-start">
-                      <h3 className="text-[1rem] md:text-[1.2rem]">
+                      <h3 className="text-[.8rem] sm:text-[1rem] md:text-[1.2rem]">
                         download on the
                       </h3>
-                      <h1 className="text-[1.5rem] md:text-[2rem]">
+                      <h1 className="text-[1.2rem] sm:text-[1.5rem] md:text-[2rem]">
                         App Store
                       </h1>
                     </div>
                   </div>
                 </Link>
 
-                <Link
-                  href={"https://play.google.com/store/apps/authartic"}
-                  target="_blank"
-                >
-                  <div className="flex p-[5px] items-center bg-black md:w-[280px] lg:w- [300px] text-white rounded-3xl px-5 md:px-3 py-1 shadow-lg">
-                    <div className="p-[5px] md:p-[10px]">
-                      <div className="w-[55px] p-[5px]">
+                <Link href={"https://play.google.com/store/apps/authartic"} target="_blank" >
+                  <div className="min-w-[190px] flex  gap-2 p-[5px] items-center bg-black md:w-[280px] lg:w-[300px] text-white rounded-xl sm:rounded-3xl px-5 md:px-3 py-1 shadow-lg">
+                    <div className="sm:p-[5px] md:p-[10px]">
+                      <div className="w-[40px] sm:w-[55px] p-[5px]">
                         <Image
                           src={googlePlayPic}
                           alt="google play"
@@ -77,10 +71,10 @@ export default function Home() {
                       </div>
                     </div>
                     <div className="flex flex-col items-start">
-                      <h3 className="text-[1rem] md:text-[1.2rem]">
+                      <h3 className="text-[.8rem] sm:text-[1rem] md:text-[1.2rem]">
                         Get It On
                       </h3>
-                      <h1 className="text-[1.5rem] md:text-[2rem]">
+                      <h1 className="text-[1.2rem] sm:text-[1.5rem] md:text-[2rem]">
                         Google play
                       </h1>
                     </div>
