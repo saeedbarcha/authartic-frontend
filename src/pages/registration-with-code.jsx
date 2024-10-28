@@ -106,6 +106,23 @@ const CodeRegistration = () => {
     setOtherLinks(updatedLinks);
   };
 
+  // testing
+  const isValidPassword = (password) => {
+    const minLength = 8; // Example minimum length
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumbers = /\d/.test(password);
+    const hasSpecialChars = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+    return (
+      password.length >= minLength &&
+      hasUpperCase &&
+      hasLowerCase &&
+      hasNumbers &&
+      hasSpecialChars
+    );
+  };
+
   const submitHandler = async (e) => {
     e.preventDefault();
 
@@ -128,6 +145,12 @@ const CodeRegistration = () => {
         message: "Passwords do not match",
       },
       { condition: !description, message: "Description is required" },
+
+      {
+        condition: !isValidPassword(password),
+        message:
+          "Password must be at least 8 characters long and include upper/lowercase letters, numbers, and special characters.",
+      },
     ];
 
     // Check validation rules
@@ -174,9 +197,6 @@ const CodeRegistration = () => {
           // Redirect on success
           router.push("/");
         } catch (error) {
-          console.log("====================================");
-          console.log(error);
-          console.log("====================================");
           toast.error(error?.data?.message || error.message);
         }
       } else {

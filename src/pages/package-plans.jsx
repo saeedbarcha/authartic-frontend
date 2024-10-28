@@ -35,16 +35,19 @@ const Index = () => {
   const [resendVerificationEmail, { isLoading: resendLoading }] =
     useResendVerificationEmailMutation();
 
-  useEffect(() => {
-    if (userInfo) {
-      const isEmailVerified = userInfo?.user?.is_email_verified;
-      if (isEmailVerified === false) {
-        setOpenModal(true);
-      } else if (isEmailVerified === true) {
-        router.push("/package-plans");
+    useEffect(() => {
+      if (userInfo) {
+        const isEmailVerified = userInfo?.user?.is_email_verified;
+        if (!isEmailVerified) {
+          setOpenModal(true);
+        } else {
+          if (openModal) {
+            setOpenModal(false);
+            router.push("/package-plans");
+          }
+        }
       }
-    }
-  }, [userInfo, router]);
+    }, [userInfo, openModal, router]);
 
   const handleResendVerification = async () => {
     try {
@@ -97,12 +100,12 @@ const Index = () => {
               >
                 {resendLoading ? "Sending..." : "Send Again"}
               </Button>
-              <Button
+              {/* <Button
                 onClick={handleOpenGmail}
                 className="cursor-pointer font-kodchasan text-md md:text-lg xl:text-xl text-white hover:bg-[#22477F] font-normal py-1 px-5 md:px-9 bg-[#22477F]"
               >
                 Open Gmail
-              </Button>
+              </Button> */}
             </DialogActions>
           </Dialog>
         )}
