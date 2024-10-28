@@ -62,7 +62,7 @@ const Header = ({ disableAccountSettings }) => {
       if(logedInUser?.role === "ADMIN"){
         router.push("/admin-login");
       }else{
-        router.push("/Home");
+        router.push("/");
       }
     } catch (error) {
       // Show error toast
