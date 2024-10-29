@@ -54,7 +54,6 @@ const RecoverPassword = () => {
     try {
       if (email.length > 2) {
         const response = await findEmail({ email, role });
-        console.log("ress", response);
 
         if (response && response.statusCode === 404) {
           // Handle specific error case for "No matching emails found."

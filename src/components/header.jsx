@@ -31,7 +31,6 @@ const Header = ({ disableAccountSettings }) => {
   useEffect(()=>{
     if(logedInUserDetails){
       setLogedInUser(logedInUserDetails)
-      console.log(logedInUserDetails,'logedInUserDetailss')
 }
   },[logedInUserDetails])
 

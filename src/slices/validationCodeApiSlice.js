@@ -1,13 +1,13 @@
 import { apiSlice } from './apiSlice';
 import { getTokenFromLocalStorage } from '@/utils/get-token';
 import { VALIDATION_CODE_URL } from '../utils/constants';
-import { CREATE_VAIDATION_CODE_URL } from '../utils/constants';
+import { CREATE_VALIDATION_CODE_URL } from '../utils/constants';
 
 export const validationCodeApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     createValidationCode: builder.mutation({
       query: (numberOfCertificates) => ({
-        url: `${CREATE_VAIDATION_CODE_URL}`,
+        url: `${CREATE_VALIDATION_CODE_URL}`,
         method: "POST",
         body: { no_Validation_code: numberOfCertificates },
         headers: {
@@ -26,7 +26,7 @@ export const validationCodeApiSlice = apiSlice.injectEndpoints({
 
     getValidationCodeDetails: builder.query({
       query: (params) => ({
-        url: `${CREATE_VAIDATION_CODE_URL}?page=${params.page}&limit=${params.limit}&is_used=${params.isUsed}`,
+        url: `${CREATE_VALIDATION_CODE_URL}?page=${params.page}&limit=${params.limit}&is_used=${params.isUsed}`,
         method: 'GET',
         headers: {
           Authorization: `Bearer ${getTokenFromLocalStorage()}`
@@ -35,7 +35,7 @@ export const validationCodeApiSlice = apiSlice.injectEndpoints({
     }),
     countCodes: builder.query({
       query: () => ({
-        url: `${CREATE_VAIDATION_CODE_URL}/count`,
+        url: `${CREATE_VALIDATION_CODE_URL}/count`,
         method: 'GET',
         headers: {
           Authorization: `Bearer ${getTokenFromLocalStorage()}`

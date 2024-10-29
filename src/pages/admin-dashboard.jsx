@@ -34,6 +34,7 @@ const AdminDashboard = () => {
     isLoading: isTotalCodesLoading,
     error: totalCodesError,
   } = useCountCodesQuery();
+
   const {
     data: totalVendors,
     isLoading: isTotalVendorsLoading,
@@ -169,6 +170,7 @@ const AdminDashboard = () => {
                         </Typography>
                         <Typography variant="body1" className="text-gray-600">
                           {specs.count}
+                        
                         </Typography>
                       </div>
                     </div>

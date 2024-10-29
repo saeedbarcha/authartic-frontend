@@ -125,12 +125,14 @@ function IssueMore() {
   }
   const handleReIssueExistingCancel = () => {
     setReIssueExistingId(0);
+    router.push("/home-after-login")
   }
 
   const handleCancel = () => {
     setReIssueCertificateNo(0);
     setAcknowledge(false);
     setReportText(""); // Clear the report text field
+    router.push("/home-after-login")
   };
 
   useEffect(() => {
@@ -139,7 +141,10 @@ function IssueMore() {
     }
   }, [clickedinfo])
 
-  const lastIssuedDate = new Date(certificateInfo?.data?.issued_date).toLocaleString();
+  const lastIssuedDate = new Date(certificateInfo?.issued_date).toLocaleString();
+  console.log('====================================');
+  console.log(certificateInfo);
+  console.log('====================================');
 
   return (
     <>
@@ -148,7 +153,7 @@ function IssueMore() {
         <Box className="flex items-center justify-center flex-col sm:flex-row gap-[1vw]">
           <Box>
             <Image
-              src={certificateInfo?.data?.product_image?.url || image}
+              src={certificateInfo?.product_image?.url || image}
               alt="sample"
               width={168}
               height={126}
@@ -157,13 +162,14 @@ function IssueMore() {
 
           <Box className="flex flex-col gap-1">
             <Typography className="font-koho text-[#080808] font-light text-[20px]">
-              {certificateInfo?.data?.name || "example name"}
+              {certificateInfo?.name || "example name"}
             </Typography>
             <Typography className="font-koho text-[#080808] font-light text-[20px]">
               {lastIssuedDate || "example Date"}
+
             </Typography>
             <Typography className="font-koho text-[#080808] font-light text-[20px]">
-              <span className="text-slate-500">number of certificates issued</span> {certificateInfo?.data?.issued || 0}
+              <span className="text-slate-500">number of certificates issued</span> {certificateInfo?.issued || 0}
             </Typography>
           </Box>
 
