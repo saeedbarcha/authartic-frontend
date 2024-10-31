@@ -33,8 +33,8 @@ const CodeRegistration = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [description, setDescription] = useState("");
   const [website, setWebsite] = useState("");
-  const [socialMediaLinks, setSocialMediaLinks] = useState([]);
-  const [otherLinks, setOtherLinks] = useState([]);
+  const [socialMediaLinks, setSocialMediaLinks] = useState(["","",""]);
+  const [otherLinks, setOtherLinks] = useState(["", "", ""]);
   const [validation_code_id, setValidationCodeId] = useState(0);
   const [acceptForm, setAcceptForm] = useState(false);
 
@@ -95,13 +95,13 @@ const CodeRegistration = () => {
   };
 
   const handlesocialMediaLinksChange = (index, value) => {
-    const updatedLinks = [socialMediaLinks];
+    const updatedLinks = [...socialMediaLinks];
     updatedLinks[index] = value;
     setSocialMediaLinks(updatedLinks);
   };
 
   const handleOtherLinkChange = (index, value) => {
-    const updatedLinks = [otherLinks];
+    const updatedLinks = [...otherLinks];
     updatedLinks[index] = value;
     setOtherLinks(updatedLinks);
   };
@@ -324,7 +324,7 @@ const CodeRegistration = () => {
 
                 <TextField
                   label="Phone"
-                  type="tel"
+                  type="tel" 
                   variant="outlined"
                   fullWidth
                   name="phone"
@@ -334,7 +334,7 @@ const CodeRegistration = () => {
                 />
               </Box>
 
-              <Typography
+              <Typography 
                 variant="body2"
                 color="textSecondary"
                 className="text-[20px] my-5"

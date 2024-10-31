@@ -18,6 +18,7 @@ import WithAuth from '@/components/withAuth';
 import { useCountVendorsQuery } from "@/slices/vendorsApliSlices";
 import { useAdminNewReportProblemQuery } from "@/slices/reportProblemApiSlice";
 
+
 const AdminDashboard = () => {
   const {
     data: totalFonts,
@@ -40,6 +41,7 @@ const AdminDashboard = () => {
     isLoading: isTotalVendorsLoading,
     error: totalVendorsError,
   } = useCountVendorsQuery();
+  
   const {
     data: totalUsers,
     isLoading: isTotalUsersLoading,
@@ -76,7 +78,7 @@ const AdminDashboard = () => {
         ? "Loading..."
         : totalVendorsError
         ? totalVendorsError?.data?.message
-        : totalVendors.totalCount || 0,
+        : totalVendors.totalCount  || 0,
       icon: <ShoppingBagIcon fontSize="large" />,
     },
     {
@@ -96,7 +98,7 @@ const AdminDashboard = () => {
         ? "Loading..."
         : totalCountriesError
         ? totalCountriesError?.data?.message
-        : totalCountries?.totalCountries || 0,
+        : totalCountries?.totalCountries  || 0,
       icon: <PublicIcon fontSize="large" />,
     },
     {
@@ -120,6 +122,8 @@ const AdminDashboard = () => {
       icon: <ReportProblemIcon fontSize="large" />,
     },
   ];
+
+ 
 
   return (
     <>
