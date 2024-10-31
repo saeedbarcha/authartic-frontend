@@ -5,7 +5,6 @@ import SampleCard from "@/components/certificateCards";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 import { useGetMyCertificateInfoQuery } from "@/slices/certificateInfoApiSlice";
-import { useGetProfileQuery } from "@/slices/userApiSlice";
 import WithAuth from '@/components/withAuth';
 
 const Index = () => {
@@ -16,7 +15,7 @@ const Index = () => {
     limit: 10,
     saved_draft: false,
   });
-
+  
   const {
     data: allCertificateData,
     error,
@@ -77,6 +76,7 @@ const Index = () => {
                 </Typography>
               )}
               {!error && certificateData?.data?.map((data, index) => (
+               
                 <SampleCard data={data} key={index} />
               ))}
               {error && (

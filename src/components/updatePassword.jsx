@@ -20,11 +20,7 @@ const UpdatePassword = () => {
     }
 
     try {
-      // Replace this with your API call to update the password
-      // Example:
-      // await fetch('/api/update-password', { method: 'POST', body: JSON.stringify({ newPassword }) });
-
-      // Simulating API call with a timeout
+    
       await new Promise((resolve) => setTimeout(resolve, 2000));
 
       toast.success('Password updated successfully!');

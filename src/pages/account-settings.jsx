@@ -83,28 +83,43 @@ const AccountSettings = () => {
       const uploadLogoData = new FormData();
       uploadLogoData.append("file", formData.changedImageFile);
       uploadLogoData.append("type", "text/photo");
-
+  
       const uploadedLogo = formData.changedImageFile
         ? await uploadAttachment(uploadLogoData).unwrap()
         : null;
       const logoImageId = uploadedLogo?.id;
-
+  
+      // Filter out empty links
+      const filteredOtherLinks = formData.other_links.filter(link => link.trim() !== "");
+      const filteredSocialMediaLinks = formData.social_media.filter(link => link.trim() !== "");
+  
+      // Optional: Ensure that there is at least one valid link
+      if (filteredOtherLinks.length === 0) {
+        toast.error("Please provide at least one other link.");
+        return;
+      }
+      if (filteredSocialMediaLinks.length === 0) {
+        toast.error("Please provide at least one social media link.");
+        return;
+      }
+  
       const dataToSubmit = {
         primary_content: formData.primary_content,
         country_id: formData.country,
         phone: formData.phone,
         about_brand: formData.about_brand,
         user_name: formData.user_name,
-        social_media: formData.social_media,
+        social_media: filteredSocialMediaLinks,
         website_url: formData.website_url,
-        other_links: formData.other_links,
+        other_links: filteredOtherLinks,
         attachment_id: logoImageId || formData.profileImage?.id,
       };
-
+  
       const res = await updateUser(dataToSubmit).unwrap();
       toast.success(res?.message || res?.data?.message || "User Updated.");
     } catch (error) {
-      toast.error(error?.message || error?.data?.message || "Error in Submit");
+   
+      toast.error(error?.message || error?.data?.message[0] || "Error in Submit");
     }
   };
 
@@ -134,10 +149,22 @@ const AccountSettings = () => {
         phone: userProfile.phone || "",
         about_brand: userProfile.about_brand || "",
         country: userProfile.country?.id || null,
-        other_links: userProfile.other_links?.concat(['http://www.example.link','http://www.example.link','http://www.example.link'])?.slice(0,3) || ["", "", ""],
+        other_links: userProfile.other_links
+          ?.concat([
+            "",
+            "",
+            "",
+          ])
+          ?.slice(0, 3) || ["", "", ""],
         profileImage: userProfile.vendor_logo || sample,
         user_name: userProfile.vendor_name || "",
-        social_media: userProfile.social_media?.concat(['http://www.example.link','http://www.example.link','http://www.example.link'])?.slice(0,3) || ["", "", ""],
+        social_media: userProfile.social_media
+          ?.concat([
+            "",
+            "",
+            "",
+          ])
+          ?.slice(0, 3) || ["", "", ""],
         website_url: userProfile.website_url || "http://www.example.url.com",
       });
     }
@@ -333,7 +360,6 @@ const AccountSettings = () => {
                           )
                         }
                       />
-                      {console.log(editingField)}
                     </label>
                   </div>
                   {formData?.other_links?.map((link, idx) => (
