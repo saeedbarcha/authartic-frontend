@@ -17,7 +17,6 @@ import { useGetActiveCountriesQuery } from "@/slices/countriesApiSlice";
 import { useUploadAttachmentMutation } from "@/slices/uploadAttachmentApiSlice";
 import { toast } from "react-toastify";
 import { useRegisterMutation } from "@/slices/userApiSlice";
-import { WithAuth } from "@/components/withAuth";
 
 const CodeRegistration = () => {
   const [uploadResult, setUploadResult] = useState(null);
@@ -33,8 +32,8 @@ const CodeRegistration = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [description, setDescription] = useState("");
   const [website, setWebsite] = useState("");
-  const [socialMediaLinks, setSocialMediaLinks] = useState(["","",""]);
-  const [otherLinks, setOtherLinks] = useState(["", "", ""]);
+  const [socialMediaLinks, setSocialMediaLinks] = useState([]);
+  const [otherLinks, setOtherLinks] = useState([]);
   const [validation_code_id, setValidationCodeId] = useState(0);
   const [acceptForm, setAcceptForm] = useState(false);
 
@@ -181,8 +180,8 @@ const CodeRegistration = () => {
             password: password,
             about_brand: description,
             website_url: website,
-            social_media: socialMediaLinks,
-            other_links: otherLinks,
+            social_media: socialMediaLinks?.filter(f=>f!==""),
+            other_links: otherLinks?.filter(f=> f!== ""),
             country_id: selectedCountry.id,
             validation_code_id: validation_code_id,
             attachment_id: uploadRes?.id,
@@ -197,7 +196,8 @@ const CodeRegistration = () => {
           // Redirect on success
           router.push("/");
         } catch (error) {
-          toast.error(error?.data?.message || error.message);
+          console.log(error)
+          toast.error(error?.data?.message ||  error?.data?.message[0] + " " + error?.data?.message[1] );
         }
       } else {
         toast.warning("Product image not selected");

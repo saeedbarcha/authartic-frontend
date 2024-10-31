@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
-import { Typography, Button, TextField, Box, Checkbox } from "@mui/material";
+import { Typography, Button, TextField, Box, Checkbox, CircularProgress } from "@mui/material";
 import {
   useGetCertificateinfoByIdQuery,
   useReIssueCertificatesMutation,
@@ -24,16 +24,16 @@ function IssueMore() {
 
   const { id: certificateInfoId, saved_draft: certificateSavedDraft, btn: clickedinfo } = router.query;
 
-  const [reIssueExisting, { isLoading: isReIssueExistingLoading, error: reIssueExistingError }] = useReIssueExistingMutation();
+  const [reIssueExisting, { isLoading: isReIssueExistingLoading }] = useReIssueExistingMutation();
 
   const [
     reIssueCertificate,
-    { isLoading: isLoadingReIssueCertificates, error: isErrorinReissueCertificate },
+    { isLoading: isLoadingReIssueCertificates },
   ] = useReIssueCertificatesMutation();
 
   const [
     reportProblem,
-    { isLoading: isLoadingreportProblem, error: isErrorreportProblem },
+    { isLoading: isLoadingreportProblem },
   ] = useReportProblemMutation();
 
   const {
@@ -62,10 +62,9 @@ function IssueMore() {
       } else {
         toast.success(res?.data?.message);
         refetch();
+        setReIssueCertificateNo(0);
       }
     } catch (err) {
-
-
       if (err?.response?.data) {
         toast.error(err.response.data.message || "An unknown error occurred");
       } else if (err?.message) {
@@ -78,7 +77,6 @@ function IssueMore() {
 
   const reportProblemHandler = async () => {
     try {
-      // Ensure that certificateInfoId is defined and valid
       if (!certificateInfoId) {
         throw new Error("Certificate ID is not defined");
       }
@@ -86,17 +84,13 @@ function IssueMore() {
       const res = await reportProblem({ id: certificateInfoId, reporting_text: reportText });
 
       if (res?.error) {
-        // Check if there's a specific error message or fallback to a generic one
         toast.error("An error occurred: " + (res.error.message || "Unknown error"));
-
       } else {
         toast.success("Your problem report has been submitted.");
         setReportText(""); // Clear the text field
         setIssueState("issueMore"); // Optionally, revert to the initial state
       }
     } catch (err) {
-
-      // Enhanced error handling
       if (err?.response?.data) {
         toast.error(err.response.data.message || "An unknown error occurred");
       } else if (err?.message) {
@@ -123,6 +117,7 @@ function IssueMore() {
       toast.error(error?.data?.message || error?.error || error?.status || error?.data?.error || error?.data?.statusCode)
     }
   }
+
   const handleReIssueExistingCancel = () => {
     setReIssueExistingId(0);
     router.push("/home-after-login")
@@ -142,9 +137,6 @@ function IssueMore() {
   }, [clickedinfo])
 
   const lastIssuedDate = new Date(certificateInfo?.issued_date).toLocaleString();
-  console.log('====================================');
-  console.log(certificateInfo);
-  console.log('====================================');
 
   return (
     <>
@@ -166,7 +158,6 @@ function IssueMore() {
             </Typography>
             <Typography className="font-koho text-[#080808] font-light text-[20px]">
               {lastIssuedDate || "example Date"}
-
             </Typography>
             <Typography className="font-koho text-[#080808] font-light text-[20px]">
               <span className="text-slate-500">number of certificates issued</span> {certificateInfo?.issued || 0}
@@ -246,7 +237,7 @@ function IssueMore() {
                 onClick={reIssueHandler}
                 disabled={!acknowledge}
               >
-                Place Order
+                {isLoadingReIssueCertificates ? <CircularProgress size={24} /> : "Place Order"}
               </Button>
               <Button
                 onClick={handleCancel}
@@ -323,7 +314,7 @@ function IssueMore() {
                 className="bg-[#27A213] rounded-[7px] font-kodchasan w-[189px]"
                 sx={{ fontFamily: "Kodchasan, sans-serif" }}
               >
-                Place Order
+                {isReIssueExistingLoading ? <CircularProgress size={24} /> : "Place Order"}
               </Button>
               <Button
                 onClick={handleReIssueExistingCancel}
@@ -370,7 +361,7 @@ function IssueMore() {
                 onClick={reportProblemHandler}
                 disabled={isLoadingreportProblem}
               >
-                Submit
+                {isLoadingreportProblem ? <CircularProgress size={24} /> : "Submit"}
               </Button>
               <Button
                 onClick={handleCancel}
@@ -388,6 +379,5 @@ function IssueMore() {
     </>
   );
 }
-
 
 export default WithAuth(IssueMore, ["VENDOR"]);
