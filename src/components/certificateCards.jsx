@@ -5,7 +5,9 @@ import { Button } from "@mui/material";
 import sampleIMG from "@/assets/images/sample.svg";
 import Link from "next/link";
 const CertificateCard = ({ data }) => {
+
   const issuedDate = new Date(`${data.issued_date}`).toLocaleString();
+
   const productImgUrl = data?.product_image?.url;
 
   return (

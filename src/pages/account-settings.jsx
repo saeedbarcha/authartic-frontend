@@ -103,7 +103,6 @@ const AccountSettings = () => {
 
       const res = await updateUser(dataToSubmit).unwrap();
       toast.success(res?.message || res?.data?.message || "User Updated.");
-      console.log("ress", res);
     } catch (error) {
       toast.error(error?.message || error?.data?.message || "Error in Submit");
     }
@@ -135,11 +134,11 @@ const AccountSettings = () => {
         phone: userProfile.phone || "",
         about_brand: userProfile.about_brand || "",
         country: userProfile.country?.id || null,
-        other_links: userProfile.other_links || ["", "", ""],
+        other_links: userProfile.other_links?.concat(['http://www.example.link','http://www.example.link','http://www.example.link'])?.slice(0,3) || ["", "", ""],
         profileImage: userProfile.vendor_logo || sample,
         user_name: userProfile.vendor_name || "",
-        social_media: userProfile.social_media || ["", "", ""],
-        website_url: userProfile.website_url || "",
+        social_media: userProfile.social_media?.concat(['http://www.example.link','http://www.example.link','http://www.example.link'])?.slice(0,3) || ["", "", ""],
+        website_url: userProfile.website_url || "http://www.example.url.com",
       });
     }
   }, [userProfile, initialFormData]);
@@ -334,9 +333,10 @@ const AccountSettings = () => {
                           )
                         }
                       />
+                      {console.log(editingField)}
                     </label>
                   </div>
-                  {formData.other_links.map((link, idx) => (
+                  {formData?.other_links?.map((link, idx) => (
                     <div key={idx} className={`w-full h-auto  pr-10`}>
                       <input
                         id="links"
