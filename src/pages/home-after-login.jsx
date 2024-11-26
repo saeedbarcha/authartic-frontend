@@ -23,6 +23,7 @@ const Index = () => {
     refetch,
   } = useGetMyCertificateInfoQuery(params);
 
+
   // Update certificates and handle errors
   useEffect(() => {
     if (allCertificateData) {

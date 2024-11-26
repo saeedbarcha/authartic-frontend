@@ -14,8 +14,17 @@ export const adminUserApiSlice = apiSlice.injectEndpoints({
         },
       }),
     }),
+    totalCountUsers: builder.query({
+      query: () => ({
+        url: `admin/user/count`,
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${getTokenFromLocalStorage()}`,
+        },
+      }),
+    }),
   }),
 });
 
 
-export const { useCountUsersQuery } = adminUserApiSlice;
+export const { useCountUsersQuery, useTotalCountUsersQuery } = adminUserApiSlice;

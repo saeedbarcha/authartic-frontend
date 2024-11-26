@@ -9,15 +9,25 @@ import FontDownloadIcon from "@mui/icons-material/FontDownload";
 import ReportProblemIcon from "@mui/icons-material/ReportProblem";
 import Link from "next/link";
 import PublicIcon from "@mui/icons-material/Public";
-import { Typography } from "@mui/material";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle"; // For active state
+import NotificationsIcon from "@mui/icons-material/Notifications"; // For problem reports
+import { Typography, Card, CardContent, Grid } from "@mui/material";
 import { useGetAdminALLFontsCountQuery } from "@/slices/fontApiSlice";
 import { useCountCountriesQuery } from "@/slices/countriesApiSlice";
 import { useCountCodesQuery } from "@/slices/validationCodeApiSlice";
-import { useCountUsersQuery } from "@/slices/adminUsersApiSlice";
-import WithAuth from '@/components/withAuth';
-import { useCountVendorsQuery } from "@/slices/vendorsApliSlices";
-import { useAdminNewReportProblemQuery } from "@/slices/reportProblemApiSlice";
-
+import {
+  useCountUsersQuery,
+  useTotalCountUsersQuery,
+} from "@/slices/adminUsersApiSlice";
+import WithAuth from "@/components/withAuth";
+import {
+  useCountVendorsQuery,
+  useTotalVendorsQuery,
+} from "@/slices/vendorsApliSlices";
+import {
+  useAdminNewReportProblemQuery,
+  useTotalReportProblemQuery,
+} from "@/slices/reportProblemApiSlice";
 
 const AdminDashboard = () => {
   const {
@@ -25,11 +35,13 @@ const AdminDashboard = () => {
     isLoading: isTotalFontsLoading,
     error: totalFontsError,
   } = useGetAdminALLFontsCountQuery();
+
   const {
     data: totalCountries,
     isLoading: isTotalCountriesLoading,
     error: totalCountriesError,
   } = useCountCountriesQuery();
+
   const {
     data: totalCodes,
     isLoading: isTotalCodesLoading,
@@ -40,13 +52,13 @@ const AdminDashboard = () => {
     data: totalVendors,
     isLoading: isTotalVendorsLoading,
     error: totalVendorsError,
-  } = useCountVendorsQuery();
-  
+  } = useTotalVendorsQuery();
+
   const {
     data: totalUsers,
     isLoading: isTotalUsersLoading,
     error: totalUsersError,
-  } = useCountUsersQuery({ page: 1, limit: 12 });
+  } = useTotalCountUsersQuery();
 
   const {
     data: totalReportsData,
@@ -54,11 +66,11 @@ const AdminDashboard = () => {
     error: TotalReportsDataError,
   } = useAdminNewReportProblemQuery({ page: 1 });
 
-  useEffect(() => {
-    if (totalUsers) {
-      // Handle side effects if needed
-    }
-  }, [totalUsers, totalUsersError]);
+  const {
+    data: totalReportProblem,
+    isLoading: isTotalReportProblemLoading,
+    error: TotalReportProblemError,
+  } = useTotalReportProblemQuery();
 
   const cards = [
     {
@@ -68,7 +80,9 @@ const AdminDashboard = () => {
         ? "Loading"
         : totalUsersError
         ? totalUsersError?.data?.message
-        : totalUsers?.totalCount || 0,
+        : totalUsers?.verifiedUsers + totalUsers?.unverifiedUsers + " Total",
+        verifiedUsers: totalUsers?.verifiedUsers + " verifiedUsers",
+        unverifiedUsers: totalUsers?.unverifiedUsers + " unverifiedUsers",
       icon: <PeopleOutlineIcon fontSize="large" />,
     },
     {
@@ -78,7 +92,12 @@ const AdminDashboard = () => {
         ? "Loading..."
         : totalVendorsError
         ? totalVendorsError?.data?.message
-        : totalVendors.totalCount  || 0,
+        : totalVendors?.verifiedVendors +
+          totalVendors?.unverifiedVendors +
+          " Total",
+      verifiedVendors: totalVendors?.verifiedVendors + " verifiedVendors",
+      unverifiedVendors: totalVendors?.unverifiedVendors + " unverifiedVendors",
+
       icon: <ShoppingBagIcon fontSize="large" />,
     },
     {
@@ -88,7 +107,9 @@ const AdminDashboard = () => {
         ? "Loading..."
         : totalCodesError
         ? totalCodesError?.data?.message
-        : totalCodes?.totalValidationCodes || 0,
+        : totalCodes?.totalValidationCodes + " Total",
+      availableValidationCodes:
+        totalCodes?.availableValidationCodes + " AvailableValidationCodes",
       icon: <VerifiedUserIcon fontSize="large" />,
     },
     {
@@ -98,7 +119,8 @@ const AdminDashboard = () => {
         ? "Loading..."
         : totalCountriesError
         ? totalCountriesError?.data?.message
-        : totalCountries?.totalCountries  || 0,
+        : totalCountries?.totalCountries + " Total",
+      activeCountries: totalCountries?.activeCountries + " ActiveCountries",
       icon: <PublicIcon fontSize="large" />,
     },
     {
@@ -108,7 +130,8 @@ const AdminDashboard = () => {
         ? "Loading..."
         : totalFontsError
         ? totalFontsError?.data?.message
-        : totalFonts?.totalFonts || 0,
+        : totalFonts?.totalFonts + " Total",
+      activeFonts: totalFonts?.activeFonts + " Active Fonts Found",
       icon: <FontDownloadIcon fontSize="large" />,
     },
     {
@@ -118,12 +141,12 @@ const AdminDashboard = () => {
         ? "Loading..."
         : TotalReportsDataError
         ? TotalReportsDataError?.data?.message
-        : totalReportsData?.count || 0,
+        : totalReportsData?.count + " Total",
+      responded: totalReportProblem?.responded + " Responded",
+      unresponded: totalReportProblem?.unresponded + " Unresponded",
       icon: <ReportProblemIcon fontSize="large" />,
     },
   ];
-
- 
 
   return (
     <>
@@ -146,41 +169,135 @@ const AdminDashboard = () => {
                   Admin Dashboard
                 </Typography>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              <Grid container spacing={3}>
                 {cards.map((specs) => (
-                  <Link
-                    key={specs.id}
-                    href={
-                      specs.title === "Users"
-                        ? "/users"
-                        : specs.title === "Vendor"
-                        ? "/vendors"
-                        : specs.title === "Validation Codes"
-                        ? "/validation-codes"
-                        : specs.title === "Countries"
-                        ? "/admin-countries"
-                        : specs.title === "Fonts"
-                        ? "/admin-fonts"
-                        : specs.title === "Report Problem"
-                        ? "/admin-report-problems"
-                        : ""
-                    }
-                  >
-                    <div className="bg-white shadow-md rounded-lg p-4 flex items-start space-x-4 hover:shadow-lg transition-shadow">
-                      <div className="flex-shrink-0">{specs.icon}</div>
-                      <div>
-                        <Typography variant="h6" className="text-gray-900">
-                          {specs.title}
-                        </Typography>
-                        <Typography variant="body1" className="text-gray-600">
-                          {specs.count}
-                        
-                        </Typography>
-                      </div>
-                    </div>
-                  </Link>
+                  <Grid item xs={12} sm={6} md={4} lg={3} key={specs.id}>
+                    <Link
+                      href={
+                        specs.title === "Users"
+                          ? "/users"
+                          : specs.title === "Vendor"
+                          ? "/vendors"
+                          : specs.title === "Validation Codes"
+                          ? "/validation-codes"
+                          : specs.title === "Countries"
+                          ? "/admin-countries"
+                          : specs.title === "Fonts"
+                          ? "/admin-fonts"
+                          : specs.title === "Report Problem"
+                          ? "/admin-report-problems"
+                          : ""
+                      }
+                    >
+                      <Card
+                        className="hover:shadow-xl transition-shadow duration-300"
+                        style={{ height: "100%" }}
+                      >
+                        <CardContent>
+                          <div className="flex items-center space-x-4">
+                            <div>{specs.icon}</div>
+                            <div>
+                              <Typography
+                                variant="h6"
+                                className="text-gray-900"
+                              >
+                                {specs.title}
+                              </Typography>
+                              <Typography
+                                variant="body1"
+                                className="text-gray-600"
+                              >
+                                {specs.count}
+                              </Typography>
+                              {specs.activeFonts && (
+                                <Typography
+                                  variant="body2"
+                                  className="text-green-500"
+                                >
+                                  <CheckCircleIcon fontSize="small" />{" "}
+                                  {specs.activeFonts}
+                                </Typography>
+                              )}
+                              {specs.activeCountries && (
+                                <Typography
+                                  variant="body2"
+                                  className="text-green-500"
+                                >
+                                  <CheckCircleIcon fontSize="small" />{" "}
+                                  {specs.activeCountries}
+                                </Typography>
+                              )}
+                              {specs.responded && (
+                                <Typography
+                                  variant="body2"
+                                  className="text-blue-500"
+                                >
+                                  <NotificationsIcon fontSize="small" />{" "}
+                                  {specs.responded}
+                                </Typography>
+                              )}
+                              {specs.unresponded && (
+                                <Typography
+                                  variant="body2"
+                                  className="text-red-500"
+                                >
+                                  <NotificationsIcon fontSize="small" />{" "}
+                                  {specs.unresponded}
+                                </Typography>
+                              )}
+                              {specs.availableValidationCodes && (
+                                <Typography
+                                  variant="body2"
+                                  className="text-yellow-500"
+                                >
+                                  <CheckCircleIcon fontSize="small" />{" "}
+                                  {specs.availableValidationCodes}
+                                </Typography>
+                              )}
+                              {specs.verifiedVendors && (
+                                <Typography
+                                  variant="body2"
+                                  className="text-blue-500"
+                                >
+                                  <NotificationsIcon fontSize="small" />{" "}
+                                  {specs.verifiedVendors}
+                                </Typography>
+                              )}
+                              {specs.unverifiedVendors && (
+                                <Typography
+                                  variant="body2"
+                                  className="text-red-500"
+                                >
+                                  <NotificationsIcon fontSize="small" />{" "}
+                                  {specs.unverifiedVendors}
+                                </Typography>
+                              )}
+                              {specs.verifiedUsers && (
+                                <Typography
+                                  variant="body2"
+                                  className="text-blue-500"
+                                >
+                                  <NotificationsIcon fontSize="small" />{" "}
+                                  {specs.verifiedUsers}
+                                </Typography>
+                              )}
+                              {specs.unverifiedUsers && (
+                                <Typography
+                                  variant="body2"
+                                  className="text-red-500"
+                                >
+                                  <NotificationsIcon fontSize="small" />{" "}
+                                  {specs.unverifiedUsers}
+                                </Typography>
+                              )}
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </Link>
+                  </Grid>
                 ))}
-              </div>
+              </Grid>
             </main>
           </div>
         </div>

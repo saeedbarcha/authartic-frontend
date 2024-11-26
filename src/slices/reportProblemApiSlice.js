@@ -30,11 +30,20 @@ export const reportProblemApiSlice = apiSlice.injectEndpoints({
     adminResponseReport: builder.mutation({
       query: ({ id, responseText, reportStatus }) => ({
         url: `${ADMIN_REPORT_PROBLEM_URL}/${id}`, // Adjust URL as needed
-        method: 'PUT',
+        method: "PUT",
         headers: {
           Authorization: `Bearer ${getTokenFromLocalStorage()}`,
         },
         body: { response_text: responseText, report_status: reportStatus },
+      }),
+    }),
+    totalReportProblem: builder.query({
+      query: () => ({
+        url: `${ADMIN_REPORT_PROBLEM_URL}/count`,
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${getTokenFromLocalStorage()}`,
+        },
       }),
     }),
   }),
@@ -44,4 +53,5 @@ export const {
   useReportProblemMutation,
   useAdminNewReportProblemQuery,
   useAdminResponseReportMutation,
+  useTotalReportProblemQuery,
 } = reportProblemApiSlice;

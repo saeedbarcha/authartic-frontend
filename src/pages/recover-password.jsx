@@ -51,35 +51,26 @@ const RecoverPassword = () => {
         const response = await findEmail({ email, role });
         if (response && response.statusCode === 404) {
           toast.error("No matching emails found.");
-        } else if (response && response.error) {
-          setSearchEmailRes(response?.data?.message?.join(" "));
+        } else if (response.error) {
           toast.error(
-            response?.error?.data?.message?.join("") || response?.message ||
-            "Enter valid email."
-          );
-        } else {
-          toast.success(
-            response?.message ||
-              response?.data?.message ||
-              "Email found successfully!"
+            response?.error?.data?.message ||
+              response?.message ||
+              "Enter valid email."
           );
         }
       } else {
         toast.error("Please enter a valid email address.");
       }
     } catch (error) {
-      toast.error(
-        error?.response?.data?.message ||
-        error?.message ||
-        "Error occurred while searching your email"
-      );
+      toast.error("Error occurred while searching your email");
     }
   };
 
   const [selectedEmail, setSelectedEmail] = useState(null);
-  
+
   const handleRadioChange = (suggestion) => {
     setSelectedEmail(suggestion);
+    setEmail(suggestion); // Update the email input field with the selected suggestion
   };
 
   const handleSendOtp = async () => {
@@ -92,16 +83,16 @@ const RecoverPassword = () => {
       const response = await sendOtpEmail(otpRequestData).unwrap();
       toast.success(
         response?.message ||
-        response?.data?.message ||
-        "OTP code sent successfully"
+          response?.data?.message ||
+          "OTP code sent successfully"
       );
       setIsOtpSent(true);
-      setCurrentPage(2);
+      setCurrentPage(2); // Move to the OTP verification page
     } catch (error) {
       toast.error(
         error?.response?.data?.message ||
-        error?.message ||
-        "Error sending OTP code"
+          error?.message ||
+          "Error sending OTP code"
       );
     } finally {
       setIsSubmitting(false);
@@ -118,11 +109,9 @@ const RecoverPassword = () => {
         otp: verifyCode,
       };
       const response = await verifyAccount(verifyData).unwrap();
-      toast.success(
-        response?.message || "OTP verified successfully"
-      );
+      toast.success(response?.message || "OTP verified successfully");
       setIsOtpVerified(true);
-      setCurrentPage(3);
+      setCurrentPage(3); // Move to the password reset page
     } catch (error) {
       toast.error(error?.data?.message || "Error verifying OTP");
     } finally {
@@ -136,7 +125,13 @@ const RecoverPassword = () => {
     const hasNumbers = /\d/.test(password);
     const hasSpecialChars = /[!@#$%^&*(),.?":{}|<>]/.test(password);
     const isValidLength = password.length >= 8;
-    return hasUpperCase && hasLowerCase && hasNumbers && hasSpecialChars && isValidLength;
+    return (
+      hasUpperCase &&
+      hasLowerCase &&
+      hasNumbers &&
+      hasSpecialChars &&
+      isValidLength
+    );
   };
 
   const handleSubmit = async (e) => {
@@ -165,10 +160,12 @@ const RecoverPassword = () => {
     try {
       const response = await updatePassword(updateData).unwrap();
       toast.success(response.message || "Password updated successfully");
-      router.push("/");
+      router.push("/"); // Redirect after successful password update
     } catch (error) {
       toast.error(
-        `Error updating password: ${error.message || "An unknown error occurred"}`
+        `Error updating password: ${
+          error.message || "An unknown error occurred"
+        }`
       );
     } finally {
       setIsSubmitting(false);
@@ -228,17 +225,18 @@ const RecoverPassword = () => {
       {currentPage === 1 && (
         <Box className="flex flex-col items-center justify-center p-4 h-full">
           <Box className="max-w-lg w-full bg-white p-6 rounded-lg shadow-lg">
-            <Typography variant="h5" component="h1" className="text-center mb-4">
+            <Typography
+              variant="h5"
+              component="h1"
+              className="text-center mb-4"
+            >
               Enter your email address
             </Typography>
             <Typography variant="body1" className="text-center text-xs mb-4">
               Enter your email address below and we will send you an OTP
             </Typography>
-            <form onSubmit={(e) => {
-              e.preventDefault();
-              handleSendOtp();
-            }}>
-              <div className="flex flex-col items-end">
+            <form onSubmit={(e) => e.preventDefault()}>
+              <div className="flex flex-col items-center">
                 <TextField
                   label="Email Address"
                   variant="outlined"
@@ -264,7 +262,9 @@ const RecoverPassword = () => {
                 )}
                 {suggestions.length > 0 && (
                   <div>
-                    <Typography variant="subtitle1">Suggested emails:</Typography>
+                    <Typography variant="subtitle1">
+                      Suggested emails:
+                    </Typography>
                     {suggestions.map((suggestion, index) => (
                       <div key={index}>
                         <input
@@ -276,6 +276,21 @@ const RecoverPassword = () => {
                         <label>{suggestion}</label>
                       </div>
                     ))}
+                    {selectedEmail && (
+                      <Button
+                        onClick={handleSendOtp}
+                        variant="contained"
+                        color="primary"
+                        className="mt-4"
+                        disabled={isOtpLoading}
+                      >
+                        {isOtpLoading ? (
+                          <CircularProgress size={24} />
+                        ) : (
+                          "Send OTP"
+                        )}
+                      </Button>
+                    )}
                   </div>
                 )}
               </div>
@@ -287,7 +302,11 @@ const RecoverPassword = () => {
       {currentPage === 2 && isOtpSent && (
         <Box className="flex flex-col items-center justify-center p-4 h-full">
           <Box className="max-w-lg w-full bg-white p-6 rounded-lg shadow-lg">
-            <Typography variant="h5" component="h1" className="text-center mb-4">
+            <Typography
+              variant="h5"
+              component="h1"
+              className="text-center mb-4"
+            >
               Enter OTP
             </Typography>
             <form onSubmit={handleVerifyOtp}>
@@ -307,7 +326,11 @@ const RecoverPassword = () => {
                 className="mt-4"
                 disabled={isVerifyLoading}
               >
-                {isVerifyLoading ? <CircularProgress size={24} /> : "Verify OTP"}
+                {isVerifyLoading ? (
+                  <CircularProgress size={24} />
+                ) : (
+                  "Verify OTP"
+                )}
               </Button>
             </form>
             {isVerifyError && (
@@ -322,7 +345,11 @@ const RecoverPassword = () => {
       {currentPage === 3 && (
         <Box className="flex flex-col items-center justify-center h-full">
           <Box className="max-w-sm w-full bg-white p-6 rounded-lg shadow-lg">
-            <Typography variant="h5" component="h1" className="text-center mb-4">
+            <Typography
+              variant="h5"
+              component="h1"
+              className="text-center mb-4"
+            >
               Update Password
             </Typography>
             <form onSubmit={handleSubmit}>
@@ -371,7 +398,11 @@ const RecoverPassword = () => {
                 className="mt-4 !bg-[#22477f]"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? <CircularProgress size={24} /> : "Update Password"}
+                {isSubmitting ? (
+                  <CircularProgress size={24} />
+                ) : (
+                  "Update Password"
+                )}
               </Button>
             </form>
           </Box>
