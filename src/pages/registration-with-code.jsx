@@ -130,7 +130,7 @@ const CodeRegistration = () => {
       { condition: !brandName, message: "Brand name is required" },
       {
         condition: !imageFiles.productImage,
-        message: "Product image is required",
+        message: "Brand logo is required",
       },
       { condition: !primaryContent, message: "Primary content is required" },
       { condition: !email, message: "E-mail is required" },
@@ -308,7 +308,7 @@ const CodeRegistration = () => {
               <Box className="flex items-center">
                 <TextField
                   select
-                  sx={textFieldCodeStyles}
+                  sx={textFieldCodeStyles }
                   variant="outlined"
                   label="code"
                   name="countryCode"
@@ -509,7 +509,7 @@ const textFieldStyles = {
 
 const textFieldCodeStyles = {
   width: "120px",
-  BorderRight: "0px",
+  Border: "0px",
 
   "& .MuiOutlinedInput-root": {
     "& fieldset": {

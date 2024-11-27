@@ -6,9 +6,9 @@ export const adminUserApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     countUsers: builder.query({
       query: ({ page = 1, limit = 12, name = "" }) => ({
-        url: `admin/all-users?page=${page}&limit=${limit}&name=${name}`,
+        url: `admin/all-users?page=${page}&limit=${limit}`,
         method: "GET",
-        params: { page, limit, name },
+        params: { page, limit },
         headers: {
           Authorization: `Bearer ${getTokenFromLocalStorage()}`,
         },

@@ -16,7 +16,7 @@ import { useGetAdminALLFontsCountQuery } from "@/slices/fontApiSlice";
 import { useCountCountriesQuery } from "@/slices/countriesApiSlice";
 import { useCountCodesQuery } from "@/slices/validationCodeApiSlice";
 import {
-  useCountUsersQuery,
+
   useTotalCountUsersQuery,
 } from "@/slices/adminUsersApiSlice";
 import WithAuth from "@/components/withAuth";
@@ -81,8 +81,8 @@ const AdminDashboard = () => {
         : totalUsersError
         ? totalUsersError?.data?.message
         : totalUsers?.verifiedUsers + totalUsers?.unverifiedUsers + " Total",
-        verifiedUsers: totalUsers?.verifiedUsers + " verifiedUsers",
-        unverifiedUsers: totalUsers?.unverifiedUsers + " unverifiedUsers",
+        verifiedUsers: totalUsers?.verifiedUsers + " verified",
+        unverifiedUsers: totalUsers?.unverifiedUsers + " unverified",
       icon: <PeopleOutlineIcon fontSize="large" />,
     },
     {
@@ -95,8 +95,8 @@ const AdminDashboard = () => {
         : totalVendors?.verifiedVendors +
           totalVendors?.unverifiedVendors +
           " Total",
-      verifiedVendors: totalVendors?.verifiedVendors + " verifiedVendors",
-      unverifiedVendors: totalVendors?.unverifiedVendors + " unverifiedVendors",
+      verifiedVendors: totalVendors?.verifiedVendors + " verified",
+      unverifiedVendors: totalVendors?.unverifiedVendors + " unverified",
 
       icon: <ShoppingBagIcon fontSize="large" />,
     },
@@ -109,7 +109,7 @@ const AdminDashboard = () => {
         ? totalCodesError?.data?.message
         : totalCodes?.totalValidationCodes + " Total",
       availableValidationCodes:
-        totalCodes?.availableValidationCodes + " AvailableValidationCodes",
+        totalCodes?.availableValidationCodes + "ValidationCodes",
       icon: <VerifiedUserIcon fontSize="large" />,
     },
     {
@@ -120,7 +120,7 @@ const AdminDashboard = () => {
         : totalCountriesError
         ? totalCountriesError?.data?.message
         : totalCountries?.totalCountries + " Total",
-      activeCountries: totalCountries?.activeCountries + " ActiveCountries",
+      activeCountries: totalCountries?.activeCountries + " Active",
       icon: <PublicIcon fontSize="large" />,
     },
     {
@@ -131,7 +131,7 @@ const AdminDashboard = () => {
         : totalFontsError
         ? totalFontsError?.data?.message
         : totalFonts?.totalFonts + " Total",
-      activeFonts: totalFonts?.activeFonts + " Active Fonts Found",
+      activeFonts: totalFonts?.activeFonts + " Active",
       icon: <FontDownloadIcon fontSize="large" />,
     },
     {
