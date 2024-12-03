@@ -19,8 +19,7 @@ import Header from "@/components/header";
 import Footer from "@/components/footer";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import WithAuth from '@/components/withAuth';
-
+import WithAuth from "@/components/withAuth";
 
 const initialData = {
   name: "",
@@ -52,7 +51,6 @@ function Index() {
   const [imageFiles, setImageFiles] = useState(null);
 
   const [loading, setLoading] = useState(false);
-
 
   const handleProductImageInputClick = () =>
     uploadProductImageRef.current.click();
@@ -87,7 +85,7 @@ function Index() {
           ).unwrap();
 
           // Extract the product image ID from the response
-          const productImageId = productImageResponse?.id;
+          const productImageId = productImageResponse?.data?.id;
 
           // Create the Certificate
           const certificateData = {
@@ -97,7 +95,7 @@ function Index() {
             font: formData.font,
             font_color: formData.font_color,
             bg_color: formData.bg_color,
-            saved_draft: toggleDraft, // Adjust based on your requirement
+            saved_draft: toggleDraft,
             product_sell: formData.product_sell,
             product_image_id: productImageId,
           };
@@ -121,7 +119,11 @@ function Index() {
           toast.error("Product image not provided.");
         }
       } catch (error) {
-        toast.error(error?.message || error?.data?.message || "Failed to create certificate. Please try again.");
+        toast.error(
+          error?.message ||
+            error?.data?.message ||
+            "Failed to create certificate. Please try again."
+        );
       }
     }
   };
@@ -454,7 +456,7 @@ function Index() {
                 onClick={() => handleSubmit(false)}
                 className="bg-[#27A213] rounded-[7px] font-kodchasan px-4"
               >
-                {loading ? "Loading..." : "Place Order"} 
+                {loading ? "Loading..." : "Place Order"}
               </Button>
               <Button
                 disabled={!acceptCertificate}

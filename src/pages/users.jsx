@@ -5,78 +5,50 @@ import Head from "next/head";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 import { DataGrid } from "@mui/x-data-grid";
+import { useCountUsersQuery } from "@/slices/adminUsersApiSlice"; // Assuming this fetches users
+
+import { Box, TextField, InputAdornment } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
 
 const columns = [
-  // { field: "id", headerName: "ID", width: 70 },
-  { field: "fullName", headerName: "User name", width: 250 },
+  { field: "user_name", headerName: "User Name", width: 250 },
   { field: "email", headerName: "Email", width: 250 },
-  { field: "verificationCode", headerName: "Verification_Code", width: 250 },
-];
-
-const rows = [
-  { id: 1, fullName: "Jon", email: "jon@gmail.com", verificationCode: 9870 },
-  { id: 2, fullName: "Cersei", email: "jon@gmail.com", verificationCode: 9870 },
-  { id: 3, fullName: "Jaime", email: "jon@gmail.com", verificationCode: 9870 },
-  { id: 4, fullName: "Arya", email: "jon@gmail.com", verificationCode: 9870 },
-  {
-    id: 5,
-    fullName: "Daenerys",
-    email: "jon@gmail.com",
-    verificationCode: 9870,
-  },
-  { id: 6, fullName: "Afridi", email: "jon@gmail.com", verificationCode: 9870 },
-  {
-    id: 7,
-    fullName: "Ferrara",
-    email: "jon@gmail.com",
-    verificationCode: 9870,
-  },
-  {
-    id: 8,
-    fullName: "Rossini",
-    email: "jon@gmail.com",
-    verificationCode: 9870,
-  },
-  { id: 9, fullName: "Harvey", email: "jon@gmail.com", verificationCode: 9870 },
-  {
-    id: 10,
-    fullName: "Harvey",
-    email: "jon@gmail.com",
-    verificationCode: 9870,
-  },
-  {
-    id: 11,
-    fullName: "Harvey",
-    email: "jon@gmail.com",
-    verificationCode: 9870,
-  },
-  {
-    id: 12,
-    fullName: "Harvey",
-    email: "jon@gmail.com",
-    verificationCode: 9870,
-  },
-  {
-    id: 13,
-    fullName: "Harvey",
-    email: "jon@gmail.com",
-    verificationCode: 9870,
-  },
-  {
-    id: 14,
-    fullName: "Harvey",
-    email: "jon@gmail.com",
-    verificationCode: 9870,
-  },
-  {
-    id: 15,
-    fullName: "Harvey",
-    email: "jon@gmail.com",
-    verificationCode: 9870,
-  },
 ];
 
 export default function UsersTable() {
+  const [userPage, setUserPage] = React.useState(1); // User pagination state
+  const [userPageSize, setUserPageSize] = React.useState(10); // User page size
+  const [searchName, setSearchName] = React.useState(""); // Search term for filtering users
+
+  const [searchValue, setSearchValue] = React.useState(""); // Local state for search input
+
+  // Define the query params to be passed to the API
+  const alluserQueryParams = {
+    page: userPage,
+    limit: userPageSize,
+  };
+
+  // Query to fetch users
+  const { data: totalUsers, isLoading: isTotalUsersLoading, error: totalUsersError } = useCountUsersQuery(alluserQueryParams);
+
+  
+
+  // Handle search value change
+  const handleSearchValue = (event) => {
+    setSearchValue(event.target.value);
+  };
+
+  // Handle submitting the search (filtering users)
+  const handleGetSearchResult = () => {
+    setSearchName(searchValue);
+  };
+
+  // Handle pagination change
+  const handlePaginationChange = ({ page, pageSize }) => {
+    setUserPage(page + 1); // Pagination in API is 1-indexed
+    setUserPageSize(pageSize);
+  };
+
   return (
     <>
       <Head>
@@ -102,18 +74,44 @@ export default function UsersTable() {
             </h1>
           </div>
 
+          {/* Search Box */}
+          {/* <Box sx={{ width: "100%", mt: "3rem", mb: "1rem" }}>
+            <TextField
+              label="Search"
+              variant="outlined"
+              fullWidth
+              value={searchValue}
+              onChange={handleSearchValue}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <SearchIcon
+                      fontSize="large"
+                      sx={{ cursor: "pointer" }}
+                      onClick={handleGetSearchResult}
+                    />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Box> */}
+
+          {/* DataGrid to display the users */}
           <div className="w-full overflow-x-auto shadow-lg">
             <DataGrid
-              rows={rows}
+              rows={totalUsers?.data || []} // Use the fetched user data
               columns={columns}
-              pageSize={10}
+              pageSize={userPageSize}
               autoHeight
-              initialState={{
-                pagination: {
-                  paginationModel: { page: 0, pageSize: 10 },
-                },
-              }} 
-              pageSizeOptions={[5, 10]}
+              pagination
+              paginationMode="server"
+              rowCount={totalUsers?.totalCount || 0} // Total users count for pagination
+              paginationModel={{
+                page: userPage - 1, // DataGrid expects 0-indexed pages
+                pageSize: userPageSize,
+              }}
+              onPaginationModelChange={handlePaginationChange}
+              loading={isTotalUsersLoading}
             />
           </div>
         </div>

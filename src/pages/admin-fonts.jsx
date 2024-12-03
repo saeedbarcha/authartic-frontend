@@ -11,6 +11,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import useDebounce from '@/hooks/useDebounce';
+import { toast } from 'react-toastify';
 import { useCreateAdminNewFontMutation, useGetAdminAllFontsQuery, useGetAdminALLFontsCountQuery, useUpdateAdminFontMutation, useDeleteAdminFontMutation } from '@/slices/fontApiSlice';
 
 const options = [
@@ -176,7 +177,7 @@ export default function PaginatedTable() {
         <div className='flex flex-col min-h-screen'>
             <Header />
             <main className='flex-grow'>
-                <Box sx={{ maxWidth: '1440px', width: '100%', mx: 'auto', p: 2 }}>
+                <Box sx={{ maxWidth: '1200px', width: '100%', mx: 'auto', p: 2 }}>
                     <Box sx={{ mb: 3 }}>
                         <Link href={'/admin-dashboard'} className='flex items-center gap-1'>
                             <ArrowBack color='primary' />

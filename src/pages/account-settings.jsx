@@ -83,26 +83,20 @@ const AccountSettings = () => {
       const uploadLogoData = new FormData();
       uploadLogoData.append("file", formData.changedImageFile);
       uploadLogoData.append("type", "text/photo");
-  
+
       const uploadedLogo = formData.changedImageFile
         ? await uploadAttachment(uploadLogoData).unwrap()
         : null;
       const logoImageId = uploadedLogo?.id;
-  
+
       // Filter out empty links
-      const filteredOtherLinks = formData.other_links.filter(link => link.trim() !== "");
-      const filteredSocialMediaLinks = formData.social_media.filter(link => link.trim() !== "");
-  
-      // Optional: Ensure that there is at least one valid link
-      if (filteredOtherLinks.length === 0) {
-        toast.error("Please provide at least one other link.");
-        return;
-      }
-      if (filteredSocialMediaLinks.length === 0) {
-        toast.error("Please provide at least one social media link.");
-        return;
-      }
-  
+      const filteredOtherLinks = formData.other_links.filter(
+        (link) => link.trim() !== ""
+      );
+      const filteredSocialMediaLinks = formData.social_media.filter(
+        (link) => link.trim() !== ""
+      );
+
       const dataToSubmit = {
         primary_content: formData.primary_content,
         country_id: formData.country,
@@ -114,12 +108,13 @@ const AccountSettings = () => {
         other_links: filteredOtherLinks,
         attachment_id: logoImageId || formData.profileImage?.id,
       };
-  
+
       const res = await updateUser(dataToSubmit).unwrap();
       toast.success(res?.message || res?.data?.message || "User Updated.");
     } catch (error) {
-   
-      toast.error(error?.message || error?.data?.message[0] || "Error in Submit");
+      toast.error(
+        error?.message || error?.data?.message[0] || "Error in Submit"
+      );
     }
   };
 
@@ -150,20 +145,12 @@ const AccountSettings = () => {
         about_brand: userProfile.about_brand || "",
         country: userProfile.country?.id || null,
         other_links: userProfile.other_links
-          ?.concat([
-            "",
-            "",
-            "",
-          ])
+          ?.concat(["", "", ""])
           ?.slice(0, 3) || ["", "", ""],
         profileImage: userProfile.vendor_logo || sample,
         user_name: userProfile.vendor_name || "",
         social_media: userProfile.social_media
-          ?.concat([
-            "",
-            "",
-            "",
-          ])
+          ?.concat(["", "", ""])
           ?.slice(0, 3) || ["", "", ""],
         website_url: userProfile.website_url || "http://www.example.url.com",
       });

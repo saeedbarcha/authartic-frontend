@@ -98,7 +98,7 @@ function Index() {
           ).unwrap();
 
           // Extract the product image ID from the response
-          const productImageId = productImageResponse?.id;
+          const productImageId = productImageResponse?.data?.id;
 
           // Create the Certificate
           const certificateData = {
@@ -478,7 +478,7 @@ function Index() {
                   </Typography>
                 </Box>
               </Box>
-              ;
+       
             </Box>
           </Box>
           <Box className="max-w-[476px] w-full mx-auto mb-6">

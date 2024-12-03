@@ -130,7 +130,7 @@ const CodeRegistration = () => {
       { condition: !brandName, message: "Brand name is required" },
       {
         condition: !imageFiles.productImage,
-        message: "Product image is required",
+        message: "Brand logo is required",
       },
       { condition: !primaryContent, message: "Primary content is required" },
       { condition: !email, message: "E-mail is required" },
@@ -180,24 +180,24 @@ const CodeRegistration = () => {
             password: password,
             about_brand: description,
             website_url: website,
-            social_media: socialMediaLinks?.filter(f=>f!==""),
-            other_links: otherLinks?.filter(f=> f!== ""),
+            social_media: socialMediaLinks?.filter((f) => f !== ""),
+            other_links: otherLinks?.filter((f) => f !== ""),
             country_id: selectedCountry.id,
             validation_code_id: validation_code_id,
-            attachment_id: uploadRes?.id,
+            attachment_id: uploadRes.data.id,
             role: "VENDOR",
           };
 
           // Send registration request
           const response = await register(registerData).unwrap();
 
-          toast.success("Registration successful!");
-
           // Redirect on success
           router.push("/");
         } catch (error) {
-          console.log(error)
-          toast.error(error?.data?.message ||  error?.data?.message[0] + " " + error?.data?.message[1] );
+          toast.error(
+            error?.data?.message ||
+              error?.data?.message[0] + " " + error?.data?.message[1]
+          );
         }
       } else {
         toast.warning("Product image not selected");
@@ -308,7 +308,7 @@ const CodeRegistration = () => {
               <Box className="flex items-center">
                 <TextField
                   select
-                  sx={textFieldCodeStyles}
+                  sx={textFieldCodeStyles }
                   variant="outlined"
                   label="code"
                   name="countryCode"
@@ -324,7 +324,7 @@ const CodeRegistration = () => {
 
                 <TextField
                   label="Phone"
-                  type="tel" 
+                  type="tel"
                   variant="outlined"
                   fullWidth
                   name="phone"
@@ -334,7 +334,7 @@ const CodeRegistration = () => {
                 />
               </Box>
 
-              <Typography 
+              <Typography
                 variant="body2"
                 color="textSecondary"
                 className="text-[20px] my-5"
@@ -509,7 +509,7 @@ const textFieldStyles = {
 
 const textFieldCodeStyles = {
   width: "120px",
-  BorderRight: "0px",
+  Border: "0px",
 
   "& .MuiOutlinedInput-root": {
     "& fieldset": {

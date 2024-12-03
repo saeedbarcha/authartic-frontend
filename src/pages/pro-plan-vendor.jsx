@@ -126,7 +126,7 @@ function ProPlanVendor() {
           ).unwrap();
 
           // Extract the product image ID from the response
-          const productImageId = productImageResponse?.id;
+          const productImageId = productImageResponse?.data?.id;
 
           // Upload Custom Background Image
           if (imageFiles.customBgImage) {
@@ -138,7 +138,7 @@ function ProPlanVendor() {
             ).unwrap();
 
             // Extract the custom background image ID from the response
-            const customBgId = customBgResponse?.id;
+            const customBgId = customBgResponse?.data?.id;
 
             // Create the Certificate
             const certificateData = {

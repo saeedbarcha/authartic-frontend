@@ -7,7 +7,6 @@ import AppleIcon from "@mui/icons-material/Apple";
 import googlePlayPic from "@/assets/images/googleplay.svg";
 import Link from "next/link";
 import Footer from "../components/footer";
-import RegisterBTN from "@/components/muiButton";
 
 export default function Home() {
   return (

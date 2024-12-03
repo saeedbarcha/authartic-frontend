@@ -22,6 +22,8 @@ const Index = () => {
     isLoading,
     refetch,
   } = useGetMyCertificateInfoQuery(params);
+  
+
 
   // Update certificates and handle errors
   useEffect(() => {
@@ -30,6 +32,7 @@ const Index = () => {
     } else if (error) {
       setCertificateData([]); // Handle error state
     }
+    refetch()
   }, [allCertificateData, error]);
 
   // Handle draft button click
