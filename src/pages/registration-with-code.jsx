@@ -7,7 +7,10 @@ import {
   MenuItem,
   Checkbox,
   Typography,
+  IconButton,
+  InputAdornment,
 } from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import Icon from "../assets/images/elements.svg";
 import Image from "next/image";
 import Footer from "@/components/footer";
@@ -36,6 +39,7 @@ const CodeRegistration = () => {
   const [otherLinks, setOtherLinks] = useState([]);
   const [validation_code_id, setValidationCodeId] = useState(0);
   const [acceptForm, setAcceptForm] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const router = useRouter();
   const [uploadAttachment] = useUploadAttachmentMutation();
@@ -347,11 +351,23 @@ const CodeRegistration = () => {
                 variant="outlined"
                 fullWidth
                 name="password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 sx={textFieldStyles}
                 className="my-9"
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? <Visibility /> : <VisibilityOff />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
               />
 
               <TextField
@@ -359,11 +375,23 @@ const CodeRegistration = () => {
                 variant="outlined"
                 fullWidth
                 name="confirmPassword"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 sx={textFieldStyles}
                 className="mb-9"
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? <Visibility /> : <VisibilityOff />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
               />
             </Box>
 
